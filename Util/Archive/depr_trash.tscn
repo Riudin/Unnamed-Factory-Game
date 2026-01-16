@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://4irg3opllce6"]
+
+[ext_resource type="Script" uid="uid://bth7wj3lu0k3a" path="res://Util/Archive/depr_trash.gd" id="1_ykujb"]
+[ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/container.png" id="2_c4671"]
+[ext_resource type="PackedScene" uid="uid://dric6t2pd0p12" path="res://Util/Archive/depr_item_holder.tscn" id="3_gmpa8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tkt07"]
+size = Vector2(16, 16)
+
+[node name="Trash" type="Area2D" node_paths=PackedStringArray("item_holder")]
+script = ExtResource("1_ykujb")
+item_holder = NodePath("ItemHolder")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tkt07")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_c4671")
+
+[node name="ItemHolder" parent="." instance=ExtResource("3_gmpa8")]
+
+[connection signal="item_held" from="ItemHolder" to="." method="_on_item_holder_item_held"]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbkcsy54dlucw"]
+
+[ext_resource type="Script" uid="uid://bj300tq42vb6x" path="res://Util/Archive/depr_belt_detector.gd" id="1_45oe7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gfhwh"]
+size = Vector2(8, 8)
+
+[node name="BeltDetector" type="Area2D"]
+monitorable = false
+script = ExtResource("1_45oe7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_gfhwh")

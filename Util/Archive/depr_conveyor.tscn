@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://7g0jd1xmxtkh"]
+
+[ext_resource type="Script" uid="uid://pmcyggcnlgu6" path="res://Objects/Scripts/Buildings/conveyor_belt.gd" id="1_yuq6p"]
+[ext_resource type="Texture2D" uid="uid://df8sk510i6tvx" path="res://Assets/Textures/belt_sheet.png" id="2_pmvjt"]
+[ext_resource type="PackedScene" uid="uid://dbkcsy54dlucw" path="res://Util/Archive/depr_belt_detector.tscn" id="3_3k4q5"]
+[ext_resource type="PackedScene" uid="uid://dric6t2pd0p12" path="res://Util/Archive/depr_item_holder.tscn" id="4_8mcpg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p60iw"]
+size = Vector2(16, 16)
+
+[node name="ConveyorBelt" type="Area2D"]
+monitoring = false
+script = ExtResource("1_yuq6p")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_p60iw")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_pmvjt")
+hframes = 5
+vframes = 3
+
+[node name="BeltDetector" parent="." instance=ExtResource("3_3k4q5")]
+
+[node name="ItemHolder" parent="." instance=ExtResource("4_8mcpg")]
+
+[connection signal="belt_detected" from="BeltDetector" to="." method="_on_belt_detector_belt_detected"]
+[connection signal="item_held" from="ItemHolder" to="." method="_on_item_holder_item_held"]

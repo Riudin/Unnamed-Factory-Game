@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dric6t2pd0p12"]
+
+[ext_resource type="Script" uid="uid://bpl56puyapcku" path="res://Util/Archive/depr_item_holder.gd" id="1_32ijj"]
+
+[node name="ItemHolder" type="Node2D"]
+script = ExtResource("1_32ijj")
