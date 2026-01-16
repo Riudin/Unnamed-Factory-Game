@@ -4,14 +4,14 @@ extends Node
 var buildings: Dictionary = {}
 
 
-func is_occupied(tile: Vector2) -> bool:
+func is_occupied(tile: Vector2i) -> bool:
 	return buildings.has(tile)
 
-func register_building(tile: Vector2, building: Node2D) -> void:
+func register_building(tile: Vector2i, building: Node2D) -> void:
 	buildings[tile] = building
 
-func unregister_building(tile: Vector2) -> void:
+func unregister_building(tile: Vector2i) -> void:
 	buildings.erase(tile)
 
-func get_building(tile: Vector2) -> Node2D:
+func get_building(tile: Vector2i) -> Node2D:
 	return buildings.get(tile)

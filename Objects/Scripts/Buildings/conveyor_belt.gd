@@ -2,13 +2,17 @@ class_name ConveyorBelt
 extends Building
 
 
+@export var debug: bool = false
+
 @export_group("References")
 @export var animation_player: AnimationPlayer
+@export var to_direction_arrow: RayCast2D
+@export var from_direction_arrow: RayCast2D
 
 @export_group("Setup")
 #enum {Left, Right, Up, Down}
-#@export var from_direction: Vector2 = Vector2.LEFT
-#@export var to_direction: Vector2 = Vector2.DOWN
+#@export var from_direction: Vector2i = Vector2i.LEFT
+#@export var to_direction: Vector2i = Vector2i.DOWN
 @export var speed: float = 2.0              # tiles per second
 @export var min_spacing: float = 16.0       # distance between items on belt # doesn't work yet
 
@@ -29,14 +33,22 @@ func _ready():
 	#print("to: " + str(to_direction))
 	#print("-----")
 
+func _process(_delta: float) -> void:
+	if debug:
+		to_direction_arrow.visible = true
+		from_direction_arrow.visible = true
+	else:
+		to_direction_arrow.visible = false
+		from_direction_arrow.visible = false
+
 func get_orientation():
-	var searching_directions: Array = [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
+	var searching_directions: Array = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
 	
 	for direction in searching_directions:
 		if direction == to_direction:
 			continue
 		
-		var target_pos: Vector2 = global_position + direction * TILE_SIZE
+		var target_pos: Vector2i = global_position + direction * TILE_SIZE
 		
 		for belt in get_tree().get_nodes_in_group("belts"):
 			if belt == self:
@@ -46,10 +58,10 @@ func get_orientation():
 				return
 
 func get_neighbors():
-	var neighbor_left := GridRegistry.get_building(tile_coordinates + Vector2.LEFT)
-	var neighbor_right := GridRegistry.get_building(tile_coordinates + Vector2.RIGHT)
-	var neighbor_up := GridRegistry.get_building(tile_coordinates + Vector2.UP)
-	var neighbor_down := GridRegistry.get_building(tile_coordinates + Vector2.DOWN)
+	var neighbor_left := GridRegistry.get_building(tile_coordinates + Vector2i.LEFT)
+	var neighbor_right := GridRegistry.get_building(tile_coordinates + Vector2i.RIGHT)
+	var neighbor_up := GridRegistry.get_building(tile_coordinates + Vector2i.UP)
+	var neighbor_down := GridRegistry.get_building(tile_coordinates + Vector2i.DOWN)
 	var neighbors: Array = [neighbor_left, neighbor_right, neighbor_up, neighbor_down]
 	
 	for n in neighbors:
@@ -66,16 +78,38 @@ func get_neighbors():
 func set_visuals():
 	var from: String
 	var to: String
-	if from_direction == Vector2.LEFT: from = "left"
-	if from_direction == Vector2.RIGHT: from = "right"
-	if from_direction == Vector2.UP: from = "up"
-	if from_direction == Vector2.DOWN: from = "down"
-	if to_direction == Vector2.LEFT: to = "left"
-	if to_direction == Vector2.RIGHT: to = "right"
-	if to_direction == Vector2.UP: to = "up"
-	if to_direction == Vector2.DOWN: to = "down"
+	if from_direction == Vector2i.LEFT: 
+		from = "left"
+		from_direction_arrow.position = Vector2i.LEFT * TILE_SIZE
+		from_direction_arrow.target_position = -Vector2i.LEFT * TILE_SIZE
+	if from_direction == Vector2i.RIGHT: 
+		from = "right"
+		from_direction_arrow.position = Vector2i.RIGHT * TILE_SIZE
+		from_direction_arrow.target_position = -Vector2i.RIGHT * TILE_SIZE
+	if from_direction == Vector2i.UP: 
+		from = "up"
+		from_direction_arrow.position = Vector2i.UP * TILE_SIZE
+		from_direction_arrow.target_position = -Vector2i.UP * TILE_SIZE
+	if from_direction == Vector2i.DOWN: 
+		from = "down"
+		from_direction_arrow.position = Vector2i.DOWN * TILE_SIZE
+		from_direction_arrow.target_position = -Vector2i.DOWN * TILE_SIZE
+	if to_direction == Vector2i.LEFT: 
+		to = "left"
+		to_direction_arrow.target_position = Vector2i.LEFT * TILE_SIZE
+	if to_direction == Vector2i.RIGHT: 
+		to = "right"
+		to_direction_arrow.target_position = Vector2i.RIGHT * TILE_SIZE
+	if to_direction == Vector2i.UP: 
+		to = "up"
+		to_direction_arrow.target_position = Vector2i.UP * TILE_SIZE
+	if to_direction == Vector2i.DOWN: 
+		to = "down"
+		to_direction_arrow.target_position = Vector2i.DOWN * TILE_SIZE
 	
 	animation_player.play(from + "_" + to)
+	#print(str(self) + " direction is " + from + "_" + to)
+	#print("to arrow target is: " + str(to_direction_arrow.target_position))
 
 func _on_tick():
 	_advance_items()
@@ -104,7 +138,7 @@ func _advance_items():
 	_update_item_positions()
 
 func _get_next_belt() -> ConveyorBelt:
-	var target_pos: Vector2 = global_position + to_direction.normalized() * TILE_SIZE
+	var target_pos: Vector2i = global_position + to_direction * TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
 		if belt == self:
@@ -139,7 +173,7 @@ func _update_item_positions():
 	for item in items:
 		item.global_position = _point_from_progress(item.progress)
 
-func _point_from_progress(progress: float) -> Vector2:
+func _point_from_progress(progress: float) -> Vector2i:
 	var start := global_position + from_direction * TILE_SIZE
-	var end := global_position + to_direction
+	var end := Vector2i(global_position) + to_direction
 	return start.lerp(end, progress)

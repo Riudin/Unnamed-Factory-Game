@@ -2,7 +2,7 @@ class_name Giver
 extends Building
 
 @export var output_per_second: int = 1
-@export var output_direction: Vector2 = Vector2.RIGHT
+@export var output_direction: Vector2i = Vector2i.RIGHT
 @export var item_resource: ItemResource
 @export var item_node_scene: PackedScene
 

@@ -3,7 +3,7 @@ extends Building
 
 
 @export var intake_per_second: int = 1
-@export var input_direction: Vector2 = Vector2.LEFT
+@export var input_direction: Vector2i = Vector2i.LEFT
 
 signal item_taken(item)
 

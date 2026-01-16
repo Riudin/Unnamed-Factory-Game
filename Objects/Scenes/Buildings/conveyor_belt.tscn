@@ -227,9 +227,12 @@ _data = {
 &"up_right": SubResource("Animation_trxdq")
 }
 
-[node name="ConveyorBelt" type="Node2D" node_paths=PackedStringArray("animation_player")]
+[node name="ConveyorBelt" type="Node2D" node_paths=PackedStringArray("animation_player", "to_direction_arrow", "from_direction_arrow")]
 script = ExtResource("1_juhao")
+debug = true
 animation_player = NodePath("AnimationPlayer")
+to_direction_arrow = NodePath("ToDirectionRC")
+from_direction_arrow = NodePath("FromDirectionRC")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_vradc")
@@ -241,3 +244,12 @@ libraries = {
 &"": SubResource("AnimationLibrary_gundl")
 }
 autoplay = "left_right"
+
+[node name="ToDirectionRC" type="RayCast2D" parent="."]
+self_modulate = Color(0.82191056, 2.623126e-06, 7.70092e-07, 1)
+target_position = Vector2(16, 0)
+
+[node name="FromDirectionRC" type="RayCast2D" parent="."]
+self_modulate = Color(0.8235294, 0, 0, 1)
+position = Vector2(-16, 0)
+target_position = Vector2(16, 0)
