@@ -227,12 +227,12 @@ _data = {
 &"up_right": SubResource("Animation_trxdq")
 }
 
-[node name="ConveyorBelt" type="Node2D" node_paths=PackedStringArray("animation_player", "to_direction_arrow", "from_direction_arrow")]
+[node name="ConveyorBelt" type="Node2D" node_paths=PackedStringArray("animation_player", "output_direction_arrow", "input_direction_arrow")]
 script = ExtResource("1_juhao")
 debug = true
 animation_player = NodePath("AnimationPlayer")
-to_direction_arrow = NodePath("ToDirectionRC")
-from_direction_arrow = NodePath("FromDirectionRC")
+output_direction_arrow = NodePath("ToDirectionRC")
+input_direction_arrow = NodePath("FromDirectionRC")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_vradc")

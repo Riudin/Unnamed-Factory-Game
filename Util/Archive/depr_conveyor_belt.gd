@@ -9,18 +9,18 @@ extends Area2D
 
 @export_category("Setup")
 enum Direction {Left, Right, Up, Down}
-@export var from_direction: Direction = Direction.Right
-@export var to_direction: Direction = Direction.Left
+@export var input_direction: Direction = Direction.Right
+@export var output_direction: Direction = Direction.Left
 
 
 func _ready() -> void:
 	set_direction()
 
 func set_direction() -> void:
-	match to_direction:
+	match output_direction:
 		Direction.Left:
 			belt_detector.position = Vector2.LEFT * 16
-			match from_direction:
+			match input_direction:
 				Direction.Right:
 					sprite.frame = 1
 				Direction.Up:
@@ -29,7 +29,7 @@ func set_direction() -> void:
 					sprite.frame = 2
 		Direction.Right:
 			belt_detector.position = Vector2.RIGHT * 16
-			match from_direction:
+			match input_direction:
 				Direction.Left:
 					sprite.frame = 11
 				Direction.Up:
@@ -38,7 +38,7 @@ func set_direction() -> void:
 					sprite.frame = 3
 		Direction.Up:
 			belt_detector.position = Vector2.UP * 16
-			match from_direction:
+			match input_direction:
 				Direction.Left:
 					sprite.frame = 12
 				Direction.Right:
@@ -47,7 +47,7 @@ func set_direction() -> void:
 					sprite.frame = 7
 		Direction.Down:
 			belt_detector.position = Vector2.DOWN * 16
-			match from_direction:
+			match input_direction:
 				Direction.Left:
 					sprite.frame = 4
 				Direction.Right:

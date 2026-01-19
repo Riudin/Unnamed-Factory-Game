@@ -3,8 +3,8 @@ extends Node2D
 
 
 var tile_coordinates: Vector2i
-var from_direction: Vector2i = Vector2i.LEFT
-var to_direction: Vector2i = Vector2i.RIGHT
+var input_direction: Vector2i = Vector2i.LEFT
+var output_direction: Vector2i = Vector2i.RIGHT
 
 func register(preview: bool = false):
 	if preview:

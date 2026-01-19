@@ -15,37 +15,33 @@ var build_mode: bool = false
 var is_building: bool = false
 var is_removing: bool = false
 
+var output_direction: Vector2i = Vector2i.RIGHT
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("one"):
 		if not build_mode or current_building != conveyor_belt:
 			current_building = conveyor_belt
 			build_mode = true
-			# TODO: set building_preview to conveyor_belt and pin it to mouse
 		else:
 			current_building = null
 			build_mode = false
-			# TODO: remove building_preview
 
 	elif event.is_action_pressed("two"):
 		if not build_mode or current_building != giver:
 			current_building = giver
 			build_mode = true
-			# TODO: set building_preview to conveyor_belt and pin it to mouse
 		else:
 			current_building = null
 			build_mode = false
-			# TODO: remove building_preview
 	
 	elif event.is_action_pressed("three"):
 		if not build_mode or current_building != trash:
 			current_building = trash
 			build_mode = true
-			# TODO: set building_preview to conveyor_belt and pin it to mouse
 		else:
 			current_building = null
 			build_mode = false
-			# TODO: remove building_preview
 
 
 	if event is InputEventMouseButton:
@@ -62,6 +58,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed:
 			is_removing = false
 
+	if event is InputEventKey:
+		if event.is_action_pressed("rotate_right"):
+			output_direction = Vector2i(-output_direction.y, output_direction.x)
+		elif event.is_action_pressed("rotate_left"):
+			output_direction = Vector2i(output_direction.y, -output_direction.x)
+
 
 func _process(_delta):
 	if build_mode and current_building != null and preview_active == false:
@@ -76,9 +78,7 @@ func _process(_delta):
 	if preview_active:
 		var mouse_tile: Vector2i = get_mouse_tile()
 		show_preview(
-			mouse_tile,
-			Vector2i.LEFT, # placeholder
-			Vector2i.RIGHT, # placeholder
+			mouse_tile
 		)
 	
 	# not sure if we need this, since we already clear previews when toggling preview_active.
@@ -93,14 +93,12 @@ func _process(_delta):
 		if not GridRegistry.is_occupied(mouse_tile, true):
 			place_building(
 			mouse_tile,
-			Vector2i.LEFT,
-			Vector2i.RIGHT,
 			)
 	elif is_removing:
 		remove_building(tilemap_ground_layer.local_to_map(get_global_mouse_position()))
 
 
-func show_preview(tile: Vector2i, from_direction: Vector2i, to_direction: Vector2i):
+func show_preview(tile: Vector2i):
 	# Clear previous preview
 	var preview_buildings = get_tree().get_nodes_in_group("preview")
 	for building in preview_buildings:
@@ -109,8 +107,6 @@ func show_preview(tile: Vector2i, from_direction: Vector2i, to_direction: Vector
 	# Place new preview building
 	place_building(
 		tile,
-		from_direction,
-		to_direction,
 		Color(1, 1, 1, 0.5), # semi-transparent
 		true # is_preview
 	)
@@ -118,8 +114,6 @@ func show_preview(tile: Vector2i, from_direction: Vector2i, to_direction: Vector
 
 func place_building(
 	tile: Vector2i,
-	from_direction: Vector2i,
-	to_direction: Vector2i,
 	color: Color = Color.WHITE,
 	is_preview: bool = false): # maybe we don't need that anymore
 	# just to be sure check if we have a building to place
@@ -139,8 +133,7 @@ func place_building(
 	var new_building = current_building.instantiate()
 	new_building.global_position = snapped_world_position
 	new_building.tile_coordinates = tile
-	new_building.from_direction = from_direction
-	new_building.to_direction = to_direction
+	new_building.output_direction = output_direction
 	new_building.modulate = color
 	if is_preview:
 		new_building.add_to_group("preview")

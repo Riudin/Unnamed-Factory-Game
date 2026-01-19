@@ -6,13 +6,13 @@ extends Building
 
 @export_group("References")
 @export var animation_player: AnimationPlayer
-@export var to_direction_arrow: RayCast2D
-@export var from_direction_arrow: RayCast2D
+@export var output_direction_arrow: RayCast2D
+@export var input_direction_arrow: RayCast2D
 
 @export_group("Setup")
 #enum {Left, Right, Up, Down}
-#@export var from_direction: Vector2i = Vector2i.LEFT
-#@export var to_direction: Vector2i = Vector2i.DOWN
+#@export var input_direction: Vector2i = Vector2i.LEFT
+#@export var output_direction: Vector2i = Vector2i.DOWN
 @export var speed: float = 2.0 # tiles per second
 @export var min_spacing: float = 16.0 # distance between items on belt # doesn't work yet
 
@@ -26,31 +26,27 @@ const TILE_SIZE: float = 16.0
 func _ready():
 	tree_exiting.connect(_on_tree_exiting)
 	TickManager.tick.connect(_on_tick)
-	self.add_to_group("belts")
-	self.add_to_group("buildings")
-	#get_neighbors()
-	#get_orientation()
+	get_orientation()
 	set_visuals()
-	#print("to: " + str(to_direction))
-	#print("-----")
+
 
 func _process(_delta: float) -> void:
 	if debug:
-		to_direction_arrow.visible = true
-		from_direction_arrow.visible = true
+		output_direction_arrow.visible = true
+		input_direction_arrow.visible = true
 	else:
-		to_direction_arrow.visible = false
-		from_direction_arrow.visible = false
+		output_direction_arrow.visible = false
+		input_direction_arrow.visible = false
 
-"""
+
 func get_orientation():
 	for neighbor in get_neighbors():
-		if neighbor is Building: print(neighbor.tile_coordinates, neighbor.to_direction)
-		if neighbor is Building and neighbor.tile_coordinates + neighbor.to_direction == self.tile_coordinates:
-			from_direction = neighbor.tile_coordinates - self.tile_coordinates
-			# break because we want to only look at the first neighbor
-			# TODO: handle multiple neighbors looking at us
+		if neighbor is Building and neighbor.tile_coordinates + neighbor.output_direction == self.tile_coordinates:
+			input_direction = neighbor.output_direction
 			break
+
+	input_direction = - output_direction
+
 
 func get_neighbors():
 	var neighbor_left := GridRegistry.get_building(tile_coordinates + Vector2i.LEFT)
@@ -60,56 +56,56 @@ func get_neighbors():
 	var neighbors: Array = [neighbor_left, neighbor_right, neighbor_up, neighbor_down]
 	
 	return neighbors
-"""
+
 
 func set_visuals():
 	var from: String
 	var to: String
-	if from_direction == Vector2i.LEFT:
+	if input_direction == Vector2i.LEFT:
 		from = "left"
-		from_direction_arrow.position = Vector2i.LEFT * TILE_SIZE
-		from_direction_arrow.target_position = - Vector2i.LEFT * TILE_SIZE
-	if from_direction == Vector2i.RIGHT:
+		input_direction_arrow.position = Vector2i.LEFT * TILE_SIZE
+		input_direction_arrow.target_position = - Vector2i.LEFT * TILE_SIZE
+	if input_direction == Vector2i.RIGHT:
 		from = "right"
-		from_direction_arrow.position = Vector2i.RIGHT * TILE_SIZE
-		from_direction_arrow.target_position = - Vector2i.RIGHT * TILE_SIZE
-	if from_direction == Vector2i.UP:
+		input_direction_arrow.position = Vector2i.RIGHT * TILE_SIZE
+		input_direction_arrow.target_position = - Vector2i.RIGHT * TILE_SIZE
+	if input_direction == Vector2i.UP:
 		from = "up"
-		from_direction_arrow.position = Vector2i.UP * TILE_SIZE
-		from_direction_arrow.target_position = - Vector2i.UP * TILE_SIZE
-	if from_direction == Vector2i.DOWN:
+		input_direction_arrow.position = Vector2i.UP * TILE_SIZE
+		input_direction_arrow.target_position = - Vector2i.UP * TILE_SIZE
+	if input_direction == Vector2i.DOWN:
 		from = "down"
-		from_direction_arrow.position = Vector2i.DOWN * TILE_SIZE
-		from_direction_arrow.target_position = - Vector2i.DOWN * TILE_SIZE
-	if to_direction == Vector2i.LEFT:
+		input_direction_arrow.position = Vector2i.DOWN * TILE_SIZE
+		input_direction_arrow.target_position = - Vector2i.DOWN * TILE_SIZE
+	if output_direction == Vector2i.LEFT:
 		to = "left"
-		to_direction_arrow.target_position = Vector2i.LEFT * TILE_SIZE
-	if to_direction == Vector2i.RIGHT:
+		output_direction_arrow.target_position = Vector2i.LEFT * TILE_SIZE
+	if output_direction == Vector2i.RIGHT:
 		to = "right"
-		to_direction_arrow.target_position = Vector2i.RIGHT * TILE_SIZE
-	if to_direction == Vector2i.UP:
+		output_direction_arrow.target_position = Vector2i.RIGHT * TILE_SIZE
+	if output_direction == Vector2i.UP:
 		to = "up"
-		to_direction_arrow.target_position = Vector2i.UP * TILE_SIZE
-	if to_direction == Vector2i.DOWN:
+		output_direction_arrow.target_position = Vector2i.UP * TILE_SIZE
+	if output_direction == Vector2i.DOWN:
 		to = "down"
-		to_direction_arrow.target_position = Vector2i.DOWN * TILE_SIZE
+		output_direction_arrow.target_position = Vector2i.DOWN * TILE_SIZE
 	
 	if animation_player.has_animation(from + "_" + to):
 		animation_player.play(from + "_" + to)
 	else:
 		modulate = Color.PURPLE # purple tint to show error
 		animation_player.play("left_right")
-	#print(str(self) + " direction is " + from + "_" + to)
-	#print("to arrow target is: " + str(to_direction_arrow.target_position))
+
 
 func _on_tick():
 	_advance_items()
+
 
 func _advance_items():
 	if items.is_empty():
 		return
 	
-	# iterate from back to front because ?
+	# iterate backwards to handle removal while iterating
 	for i in range(items.size() - 1, -1, -1):
 		var item = items[i]
 		var max_progress := 1.0
@@ -128,8 +124,9 @@ func _advance_items():
 	
 	_update_item_positions()
 
+
 func _get_next_belt() -> ConveyorBelt:
-	var target_pos: Vector2i = global_position + to_direction * TILE_SIZE
+	var target_pos: Vector2i = global_position + output_direction * TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
 		if belt == self:
@@ -138,6 +135,7 @@ func _get_next_belt() -> ConveyorBelt:
 			return belt
 	
 	return null
+
 
 func _push_to_next_belt(item):
 	next_belt = _get_next_belt()
@@ -149,25 +147,30 @@ func _push_to_next_belt(item):
 		items.erase(item)
 		next_belt.add_item(item, 0.0)
 
+
 func can_accept_item() -> bool:
 	if items.is_empty():
 		return true
 	
 	return items[0].progress > min_spacing
 
+
 func add_item(item, start_progress := 0.0):
 	item.current_belt = self
 	item.progress = start_progress
 	items.append(item)
 
+
 func _update_item_positions():
 	for item in items:
 		item.global_position = _point_from_progress(item.progress)
 
+
 func _point_from_progress(progress: float) -> Vector2i:
-	var start := global_position + from_direction * TILE_SIZE
-	var end := Vector2i(global_position) + to_direction
+	var start := global_position + input_direction * TILE_SIZE
+	var end := Vector2i(global_position) + output_direction
 	return start.lerp(end, progress)
+
 
 func _on_tree_exiting() -> void:
 	for item in items:

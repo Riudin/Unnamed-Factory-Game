@@ -76,24 +76,24 @@ func generate_building_preview():
 	# Reset last direction
 	var last_to_dir: Vector2i = Vector2i.ZERO
 	
-	# Set the to_direction and from_direction for each tile in the path
+	# Set the output_direction and input_direction for each tile in the path
 	for i in range(path.size()):
 		var tile := path[i]
-		var to_direction: Vector2i
+		var output_direction: Vector2i
 		
 		if i < path.size() - 1: # all but last tile
-			to_direction = path[i + 1] - tile
-			last_to_dir = to_direction
+			output_direction = path[i + 1] - tile
+			last_to_dir = output_direction
 		else:
-			to_direction = last_to_dir
+			output_direction = last_to_dir
 		
-		if to_direction == Vector2i.ZERO:
-			to_direction = Vector2i.RIGHT # if its just one Tile, default to right
+		if output_direction == Vector2i.ZERO:
+			output_direction = Vector2i.RIGHT # if its just one Tile, default to right
 		
-		var from_direction: Vector2i = calculate_from_direction(tile, to_direction, true)
+		var input_direction: Vector2i = calculate_input_direction(tile, output_direction, true)
 
 		# maybe check if already registered?
-		place_building(tile, from_direction, to_direction, Color.AQUA, true)
+		place_building(tile, input_direction, output_direction, Color.AQUA, true)
 		#last_previewed_tiles.append(tile)
 	
 	last_end_tile = end_tile
@@ -107,8 +107,8 @@ func finalize_preview_buildings():
 
 func place_building(
 	tile: Vector2i,
-	from_direction: Vector2i,
-	to_direction: Vector2i,
+	input_direction: Vector2i,
+	output_direction: Vector2i,
 	color: Color = Color.WHITE,
 	is_preview: bool = false):
 	if current_building == null:
@@ -126,8 +126,8 @@ func place_building(
 	var building = current_building.instantiate()
 	building.global_position = snapped_world_position
 	building.tile_coordinates = tile
-	building.from_direction = from_direction
-	building.to_direction = to_direction
+	building.input_direction = input_direction
+	building.output_direction = output_direction
 	building.modulate = color
 	if is_preview:
 		building.add_to_group("preview")
@@ -162,16 +162,16 @@ func build_belt_path(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
 	path.append(end)
 	return path
 
-func calculate_from_direction(tile: Vector2i, tile_to_direction: Vector2i = Vector2i.RIGHT, preview: bool = false) -> Vector2i:
+func calculate_input_direction(tile: Vector2i, tile_output_direction: Vector2i = Vector2i.RIGHT, preview: bool = false) -> Vector2i:
 	for neighbor in get_neighbors(tile, preview):
-		if neighbor is Building and neighbor.tile_coordinates + neighbor.to_direction == tile:
+		if neighbor is Building and neighbor.tile_coordinates + neighbor.output_direction == tile:
 			return neighbor.tile_coordinates - tile
 			# return here because we want to only look at the first neighbor for now
 			# TODO: handle multiple neighbors looking at us
 			# TODO: what if no neighbor is found? (first placed building)
 
 
-	return -tile_to_direction # default if no neighbor is found
+	return -tile_output_direction # default if no neighbor is found
 
 func get_neighbors(tile: Vector2i, preview: bool = false):
 	var neighbor_left := GridRegistry.get_building(tile + Vector2i.LEFT)
