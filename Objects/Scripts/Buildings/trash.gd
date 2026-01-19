@@ -30,11 +30,10 @@ func take_in_item():
 	var intake_item: Node2D = belt.items[0]
 	emit_signal("item_taken", intake_item)
 	print("Taken Item in: " + str(intake_item.display_name))
-	belt.items.erase(intake_item)      # maybe later on move deletion of the item to belt. but it's fine for now
+	belt.items.erase(intake_item) # maybe later on move deletion of the item to belt. but it's fine for now
 	intake_item.queue_free()
 	
 	
-
 func get_input_belt():
 	var target_pos = global_position + input_direction * TILE_SIZE
 	

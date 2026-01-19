@@ -30,7 +30,7 @@ func produce_item():
 	
 	var item = item_node_scene.instantiate()
 	item.item_resource = item_resource
-	get_tree().current_scene.add_child(item)     # später ort ändern
+	get_tree().current_scene.add_child(item) # später ort ändern
 	belt.add_item(item, 0.0)
 
 

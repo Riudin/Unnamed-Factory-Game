@@ -247,9 +247,11 @@ autoplay = "left_right"
 
 [node name="ToDirectionRC" type="RayCast2D" parent="."]
 self_modulate = Color(0.82191056, 2.623126e-06, 7.70092e-07, 1)
+scale = Vector2(0.75, 0.75)
 target_position = Vector2(16, 0)
 
 [node name="FromDirectionRC" type="RayCast2D" parent="."]
 self_modulate = Color(0.8235294, 0, 0, 1)
 position = Vector2(-16, 0)
+scale = Vector2(0.75, 0.75)
 target_position = Vector2(16, 0)
