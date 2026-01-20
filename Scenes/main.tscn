@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://b7pxr3lx7wi2l"]
+[gd_scene load_steps=14 format=4 uid="uid://b7pxr3lx7wi2l"]
 
 [ext_resource type="Texture2D" uid="uid://c0e6q2raer5jh" path="res://Assets/Textures/grass.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://mk67x32tv1df" path="res://Scenes/main.gd" id="1_ynf5e"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://byapqwm11hntg" path="res://Util/Components/building_handler.tscn" id="4_hptm8"]
 [ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/container.png" id="5_344ge"]
 [ext_resource type="PackedScene" uid="uid://0ju4rdgwo8aw" path="res://Util/Components/camera_controller.tscn" id="5_d1ilt"]
-[ext_resource type="Texture2D" uid="uid://crr7mj0jqutkh" path="res://Assets/Textures/smithy.png" id="6_ynf5e"]
 [ext_resource type="Script" uid="uid://ear64kri732a" path="res://UI/Scripts/slot.gd" id="9_d1ilt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jjgbg"]
@@ -106,7 +105,6 @@ size_flags_vertical = 8
 
 [node name="TextureRect" type="TextureRect" parent="UserInterface/MarginContainer/ToolBar/Slot4"]
 layout_mode = 2
-texture = ExtResource("6_ynf5e")
 stretch_mode = 3
 
 [node name="Slot5" type="PanelContainer" parent="UserInterface/MarginContainer/ToolBar"]

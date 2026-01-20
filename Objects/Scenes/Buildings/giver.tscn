@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://bi36o2p0uyqpk" path="res://Objects/Scenes/Items/item_node.tscn" id="3_urie8"]
 
 [node name="Giver" type="Node2D"]
-z_index = 2
 script = ExtResource("1_e1tjb")
 item_resource = ExtResource("2_2q2vu")
 item_node_scene = ExtResource("3_urie8")

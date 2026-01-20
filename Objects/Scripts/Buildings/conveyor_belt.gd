@@ -67,23 +67,13 @@ func get_input_connections():
 	var neighbor_up := GridRegistry.get_building(tile_coordinates + Vector2i.UP)
 	var neighbor_down := GridRegistry.get_building(tile_coordinates + Vector2i.DOWN)
 
-	# print("My Position is " + str(tile_coordinates) + " and my neighbors are: ")
-	# print("Left: " + str(neighbor_left))
-	# print("Right: " + str(neighbor_right))
-	# print("Up: " + str(neighbor_up))
-	# print("Down: " + str(neighbor_down))
-
 	var neighbors: Array = [neighbor_left, neighbor_right, neighbor_up, neighbor_down]
 	var input_connections: Array = []
 
-	print("Looking at me are: ")
 	for neighbor in neighbors:
 		if neighbor is Building and neighbor.tile_coordinates + neighbor.output_direction == self.tile_coordinates:
 			input_connections.append(neighbor)
-			#input_direction = neighbor.output_direction
-			#break
-	print(input_connections)
-	print("---")
+
 	return input_connections
 
 

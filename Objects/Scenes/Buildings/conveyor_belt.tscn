@@ -228,6 +228,7 @@ _data = {
 }
 
 [node name="ConveyorBelt" type="Node2D" node_paths=PackedStringArray("animation_player", "output_direction_arrow", "input_direction_arrow")]
+modulate = Color(1, 1, 1, 0.503)
 script = ExtResource("1_juhao")
 debug = true
 animation_player = NodePath("AnimationPlayer")

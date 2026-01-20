@@ -1,0 +1,7 @@
+Features:
+
+- implement belt merging
+
+Bugs:
+
+- none, perfect game.

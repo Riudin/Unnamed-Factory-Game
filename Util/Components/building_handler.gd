@@ -10,8 +10,13 @@ extends Node2D
 const TILE_SIZE: float = 16.0
 
 var current_building: PackedScene
-var preview_active: bool = false
 var preview_building: Node2D = null
+
+var last_preview_tile: Vector2i # defaults to (0,0), keep in mind to check if that causes problems (also never resets)
+var building_origin_tile: Vector2i # defaults to (0,0), keep in mind to check if that causes problems (also never resets)
+var last_building_tile: Vector2i # defaults to (0,0), keep in mind to check if that causes problems (also never resets)
+
+var preview_active: bool = false
 var build_mode: bool = false
 var is_building: bool = false
 var is_removing: bool = false
@@ -20,11 +25,12 @@ var output_direction: Vector2i = Vector2i.RIGHT
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# This whole input one, two, three... section is spaghetti. But eh.. it works TODO: make lasagna instead
 	if event.is_action_pressed("one"):
 		if not build_mode or current_building != conveyor_belt:
 			current_building = conveyor_belt
 			build_mode = true
-			clear_preview()
+			update_preview()
 		else:
 			current_building = null
 			build_mode = false
@@ -33,7 +39,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not build_mode or current_building != giver:
 			current_building = giver
 			build_mode = true
-			clear_preview()
+			update_preview()
 		else:
 			current_building = null
 			build_mode = false
@@ -42,7 +48,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not build_mode or current_building != trash:
 			current_building = trash
 			build_mode = true
-			clear_preview()
+			update_preview()
 		else:
 			current_building = null
 			build_mode = false
@@ -51,12 +57,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		# left mouse button to place buildings
 		if build_mode and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			building_origin_tile = get_mouse_tile()
+			last_building_tile = building_origin_tile
 			is_building = true
+
+			place_building(building_origin_tile)
+			update_preview(building_origin_tile)
+
+			if current_building != conveyor_belt:
+				is_building = false
 			
 		if build_mode and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			is_building = false
 			
-		# Right mouse button to remove buildings
+		# right mouse button to remove buildings
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			is_removing = true
 		elif event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed:
@@ -65,10 +79,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.is_action_pressed("rotate_left"):
 			output_direction = Vector2i(output_direction.y, -output_direction.x)
-			clear_preview()
+			update_preview()
 		elif event.is_action_pressed("rotate_right"):
 			output_direction = Vector2i(-output_direction.y, output_direction.x)
-			clear_preview()
+			update_preview()
 
 
 func _process(_delta):
@@ -76,64 +90,91 @@ func _process(_delta):
 		preview_active = true
 	elif (not build_mode or current_building == null) and preview_active == true:
 		preview_active = false
-
-		# Clear preview when preview_active gets turned off
 		clear_preview()
+		preview_building = null
 	
-	if preview_active:
+	if not is_building and preview_active:
 		var mouse_tile: Vector2i = get_mouse_tile()
-		show_preview(mouse_tile)
-	
-	# not sure if we need this, since we already clear previews when toggling preview_active.
-	# elif get_tree().get_nodes_in_group("preview").size() > 0:
-	# 	var preview_buildings = get_tree().get_nodes_in_group("preview")
-	# 	for building in preview_buildings:
-	# 		building.queue_free()
+		if mouse_tile != last_preview_tile:
+			update_preview()
 
-	if is_building: # that means we are currently holding left mouse button and are building. TODO: make unambiguous
+	if is_building: # that means we are currently holding left mouse button and are building. TODO: make code unambiguous
 		var mouse_tile: Vector2i = get_mouse_tile()
-		if not GridRegistry.is_occupied(mouse_tile, true):
-			place_building(
-			mouse_tile,
-			)
+		var building_tile: Vector2i = mouse_tile
+
+		if mouse_tile != building_origin_tile:
+			if output_direction == Vector2i.RIGHT or output_direction == Vector2i.LEFT:
+				building_tile = Vector2i(mouse_tile.x, building_origin_tile.y)
+			else:
+				building_tile = Vector2i(building_origin_tile.x, mouse_tile.y)
+
+		# only place and update preview when the restricted tile actually changes
+		if preview_active and building_tile != last_building_tile:
+			place_building(building_tile)
+			update_preview(building_tile)
+
+			# casual euclidean distance calculation to check if we have to fill in missing tiles. 
+			# (yes, I figured this shit out myself! this is what I have to put up with!)
+			var distance = int(sqrt(pow((last_building_tile.x - building_tile.x), 2) + pow((last_building_tile.y - building_tile.y), 2)))
+			# Note to self: always check documentation first to find stuff like Vector2.distance_to() in the future...
+			print(distance)
+
+			# TODO: maybe replace this prototyping abomination with the path function from depr_building_handler when too much free time
+			if distance > 1:
+				for i in range(1, distance):
+					if output_direction == Vector2i.RIGHT: place_building(Vector2i(last_building_tile.x + i, last_building_tile.y))
+					if output_direction == Vector2i.LEFT: place_building(Vector2i(last_building_tile.x - i, last_building_tile.y))
+					if output_direction == Vector2i.UP: place_building(Vector2i(last_building_tile.x, last_building_tile.y - i))
+					if output_direction == Vector2i.DOWN: place_building(Vector2i(last_building_tile.x, last_building_tile.y + i))
+
+			last_building_tile = building_tile
+			
 	elif is_removing:
 		remove_building(tilemap_ground_layer.local_to_map(get_global_mouse_position()))
 
-
 func show_preview(tile: Vector2i):
-	# Clear previous preview   --->>> moved to toggle of preview_active in process
-	# var preview_buildings = get_tree().get_nodes_in_group("preview")
-	# for building in preview_buildings:
-	# 	building.queue_free()
-	# if we habe a preview building, we want to move it instead of creating a new one
-	if preview_building != null:
-		var snapped_world_position: Vector2i = tilemap_ground_layer.to_global(tilemap_ground_layer.map_to_local(tile))
-		preview_building.global_position = snapped_world_position # TODO: maybe manage pos only in tile_coordinates
-		preview_building.tile_coordinates = tile
-		preview_building.get_orientation()
-		preview_building.set_visuals()
+	var can_build: bool = true
+	var preview_color: Color
+
+	if GridRegistry.is_occupied(tile, true):
+		if preview_building and preview_building is ConveyorBelt \
+			and GridRegistry.get_building(tile) is ConveyorBelt \
+			and GridRegistry.get_building(tile).output_direction != output_direction:
+			can_build = true
+		else:
+			can_build = false
+	
+	if can_build:
+		preview_color = Color(0, 1, 0, 1) # green
 	else:
-		# Place new preview building
-		place_building(
-			tile,
-			Color(1, 1, 1, 0.5), # semi-transparent
-			true # is_preview
-		)
+		preview_color = Color(1, 0, 0, 1) # red
+
+	place_building(
+		tile,
+		preview_color,
+		true # is_preview
+	)
+	
+	last_preview_tile = tile
 
 
-func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool = false): # maybe we don't need is_preview anymore?
-	# just to be sure check if we have a building to place
-	if current_building == null:
+func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool = false):
+	var can_build: bool = true
+
+	if not is_preview and GridRegistry.is_occupied(tile):
+		can_build = false
+
+		if current_building != null \
+			and current_building == conveyor_belt \
+			and GridRegistry.get_building(tile) is ConveyorBelt \
+			and GridRegistry.get_building(tile).output_direction != output_direction:
+			print("tets")
+			can_build = true
+			remove_building(tile)
+
+	if not can_build:
 		return
-	
-	if preview_building != null and is_preview:
-		preview_building.queue_free()
 
-	# if not is_preview and GridRegistry.is_occupied(tile):
-	# 	return
-	# elif GridRegistry.is_occupied(tile, true):
-	# 	color = Color.RED
-	
 	var snapped_world_position: Vector2i = tilemap_ground_layer.to_global(tilemap_ground_layer.map_to_local(tile))
 	
 	var new_building = current_building.instantiate()
@@ -143,10 +184,11 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 	new_building.modulate = color
 	if is_preview:
 		new_building.add_to_group("preview")
+		new_building.top_level = true
 		preview_building = new_building
 	else:
 		new_building.register()
-		clear_preview()
+		#clear_preview() # maybe unnecessary because at this point we should have already deactivated preview mode
 	
 	get_tree().current_scene.add_child(new_building)
 
@@ -162,8 +204,12 @@ func get_mouse_tile() -> Vector2i:
 	return tilemap_ground_layer.local_to_map(get_global_mouse_position())
 
 
+func update_preview(tile: Vector2i = get_mouse_tile()):
+	clear_preview()
+	show_preview(tile)
+
+
 func clear_preview():
 	var preview_buildings = get_tree().get_nodes_in_group("preview")
 	for building in preview_buildings:
 		building.queue_free()
-	preview_building = null

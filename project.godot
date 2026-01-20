@@ -33,8 +33,9 @@ window/stretch/mode="viewport"
 folder_colors={
 "res://Assets/": "yellow",
 "res://Objects/": "orange",
+"res://Objects/Scenes/Buildings/": "red",
 "res://Resources/": "blue",
-"res://Scenes/": "red",
+"res://Scenes/": "pink",
 "res://Sound/": "purple",
 "res://UI/": "green",
 "res://Util/": "gray"
