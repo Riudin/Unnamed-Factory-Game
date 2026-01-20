@@ -23,11 +23,15 @@ var next_belt: ConveyorBelt = null
 const TILE_SIZE: float = 16.0
 
 
+#################################
+# Setup Orientation and Visuals #
+#################################
+
+
 func _ready():
 	tree_exiting.connect(_on_tree_exiting)
 	TickManager.tick.connect(_on_tick)
 	get_orientation()
-	set_visuals()
 
 
 func _process(_delta: float) -> void:
@@ -40,22 +44,47 @@ func _process(_delta: float) -> void:
 
 
 func get_orientation():
-	for neighbor in get_neighbors():
-		if neighbor is Building and neighbor.tile_coordinates + neighbor.output_direction == self.tile_coordinates:
-			input_direction = neighbor.output_direction
-			break
-
 	input_direction = - output_direction
 
+	var input_connections: Array = get_input_connections()
+	if input_connections.size() > 1:
+		input_direction = - output_direction
+		# TODO: handle edge case of 2 inputs adjacent to each other
+		# expected outcome: input fom left and down -> output dir left = input from down and vice versa
+	elif input_connections.size() > 0:
+		var input_building = input_connections[0]
+		input_direction = - input_building.output_direction
+	
+	if input_direction == output_direction:
+		input_direction = - output_direction
 
-func get_neighbors():
+	set_visuals()
+	
+
+func get_input_connections():
 	var neighbor_left := GridRegistry.get_building(tile_coordinates + Vector2i.LEFT)
 	var neighbor_right := GridRegistry.get_building(tile_coordinates + Vector2i.RIGHT)
 	var neighbor_up := GridRegistry.get_building(tile_coordinates + Vector2i.UP)
 	var neighbor_down := GridRegistry.get_building(tile_coordinates + Vector2i.DOWN)
+
+	# print("My Position is " + str(tile_coordinates) + " and my neighbors are: ")
+	# print("Left: " + str(neighbor_left))
+	# print("Right: " + str(neighbor_right))
+	# print("Up: " + str(neighbor_up))
+	# print("Down: " + str(neighbor_down))
+
 	var neighbors: Array = [neighbor_left, neighbor_right, neighbor_up, neighbor_down]
-	
-	return neighbors
+	var input_connections: Array = []
+
+	print("Looking at me are: ")
+	for neighbor in neighbors:
+		if neighbor is Building and neighbor.tile_coordinates + neighbor.output_direction == self.tile_coordinates:
+			input_connections.append(neighbor)
+			#input_direction = neighbor.output_direction
+			#break
+	print(input_connections)
+	print("---")
+	return input_connections
 
 
 func set_visuals():
@@ -93,9 +122,12 @@ func set_visuals():
 	if animation_player.has_animation(from + "_" + to):
 		animation_player.play(from + "_" + to)
 	else:
-		modulate = Color.PURPLE # purple tint to show error
+		modulate = Color.PURPLE # purple to show error
 		animation_player.play("left_right")
 
+###################
+## Item Handling ##
+###################
 
 func _on_tick():
 	_advance_items()
