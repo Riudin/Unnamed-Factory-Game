@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://dpias8oq1vqm7"]
+
+[ext_resource type="Script" uid="uid://c1us0eggbma00" path="res://Util/Components/selection_highlight.gd" id="1_8cpio"]
+[ext_resource type="Texture2D" uid="uid://bsihwq5qh57i8" path="res://Assets/Textures/selection_highlight.png" id="1_li2ul"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8cpio"]
+size = Vector2(16, 16)
+
+[node name="SelectionHighlight" type="Node2D" node_paths=PackedStringArray("highlight_sprite", "output_marker", "mouse_detector")]
+z_index = 1
+script = ExtResource("1_8cpio")
+highlight_sprite = NodePath("HighlightSprite")
+output_marker = NodePath("")
+mouse_detector = NodePath("MouseDetector")
+
+[node name="HighlightSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_li2ul")
+region_rect = Rect2(0, 0, 16, 16)
+
+[node name="MouseDetector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MouseDetector"]
+shape = SubResource("RectangleShape2D_8cpio")
+
+[connection signal="mouse_entered" from="MouseDetector" to="." method="_on_mouse_detector_mouse_entered"]
+[connection signal="mouse_exited" from="MouseDetector" to="." method="_on_mouse_detector_mouse_exited"]

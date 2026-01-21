@@ -13,6 +13,7 @@ const TILE_SIZE: float = 16.0
 func _ready():
 	TickManager.tick.connect(_on_tick)
 	self.add_to_group("buildings")
+	setup_output_marker()
 
 func _on_tick():
 	tick_counter += 1

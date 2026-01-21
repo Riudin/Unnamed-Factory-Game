@@ -83,6 +83,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.is_action_pressed("rotate_right"):
 			output_direction = Vector2i(-output_direction.y, output_direction.x)
 			update_preview()
+	
+	if event is InputEventKey:
+		if event.is_action_pressed("show_advanced_building_info"):
+			GameSettings.set_show_advanced_building_info(not GameSettings.show_advanced_building_info)
 
 
 func _process(_delta):
@@ -117,7 +121,6 @@ func _process(_delta):
 			# (yes, I figured this shit out myself! this is what I have to put up with!)
 			var distance = int(sqrt(pow((last_building_tile.x - building_tile.x), 2) + pow((last_building_tile.y - building_tile.y), 2)))
 			# Note to self: always check documentation first to find stuff like Vector2.distance_to() in the future...
-			print(distance)
 
 			# TODO: maybe replace this prototyping abomination with the path function from depr_building_handler when too much free time
 			if distance > 1:
@@ -168,7 +171,6 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 			and current_building == conveyor_belt \
 			and GridRegistry.get_building(tile) is ConveyorBelt \
 			and GridRegistry.get_building(tile).output_direction != output_direction:
-			print("tets")
 			can_build = true
 			remove_building(tile)
 

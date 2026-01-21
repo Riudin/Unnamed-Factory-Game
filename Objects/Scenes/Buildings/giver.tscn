@@ -1,14 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://bb2s8lb8uyaj1"]
+[gd_scene load_steps=7 format=3 uid="uid://bb2s8lb8uyaj1"]
 
 [ext_resource type="Script" uid="uid://b0pcek6usjqqx" path="res://Objects/Scripts/Buildings/giver.gd" id="1_e1tjb"]
 [ext_resource type="Resource" uid="uid://31tj0me2pjdk" path="res://Resources/Items/stone.tres" id="2_2q2vu"]
 [ext_resource type="Texture2D" uid="uid://lr20anc2mgh0" path="res://Assets/Textures/drill.png" id="2_j747n"]
 [ext_resource type="PackedScene" uid="uid://bi36o2p0uyqpk" path="res://Objects/Scenes/Items/item_node.tscn" id="3_urie8"]
+[ext_resource type="PackedScene" uid="uid://dpias8oq1vqm7" path="res://Util/Components/selection_highlight.tscn" id="5_2q2vu"]
+[ext_resource type="PackedScene" uid="uid://bpf25gn57jbv7" path="res://Util/Components/output_marker.tscn" id="6_urie8"]
 
-[node name="Giver" type="Node2D"]
+[node name="Giver" type="Node2D" node_paths=PackedStringArray("selection_highlight")]
 script = ExtResource("1_e1tjb")
 item_resource = ExtResource("2_2q2vu")
 item_node_scene = ExtResource("3_urie8")
+selection_highlight = NodePath("SelectionHighlight")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_j747n")
+
+[node name="SelectionHighlight" parent="." node_paths=PackedStringArray("output_marker") instance=ExtResource("5_2q2vu")]
+output_marker = NodePath("OutputMarker")
+
+[node name="OutputMarker" parent="SelectionHighlight" instance=ExtResource("6_urie8")]

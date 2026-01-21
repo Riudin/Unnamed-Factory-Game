@@ -6,13 +6,8 @@ extends Building
 
 @export_group("References")
 @export var animation_player: AnimationPlayer
-@export var output_direction_arrow: RayCast2D
-@export var input_direction_arrow: RayCast2D
 
 @export_group("Setup")
-#enum {Left, Right, Up, Down}
-#@export var input_direction: Vector2i = Vector2i.LEFT
-#@export var output_direction: Vector2i = Vector2i.DOWN
 @export var speed: float = 2.0 # tiles per second
 @export var min_spacing: float = 16.0 # distance between items on belt # doesn't work yet
 
@@ -31,16 +26,9 @@ const TILE_SIZE: float = 16.0
 func _ready():
 	tree_exiting.connect(_on_tree_exiting)
 	TickManager.tick.connect(_on_tick)
+
 	get_orientation()
-
-
-func _process(_delta: float) -> void:
-	if debug:
-		output_direction_arrow.visible = true
-		input_direction_arrow.visible = true
-	else:
-		output_direction_arrow.visible = false
-		input_direction_arrow.visible = false
+	setup_output_marker()
 
 
 func get_orientation():
@@ -82,33 +70,20 @@ func set_visuals():
 	var to: String
 	if input_direction == Vector2i.LEFT:
 		from = "left"
-		input_direction_arrow.position = Vector2i.LEFT * TILE_SIZE
-		input_direction_arrow.target_position = - Vector2i.LEFT * TILE_SIZE
 	if input_direction == Vector2i.RIGHT:
 		from = "right"
-		input_direction_arrow.position = Vector2i.RIGHT * TILE_SIZE
-		input_direction_arrow.target_position = - Vector2i.RIGHT * TILE_SIZE
 	if input_direction == Vector2i.UP:
 		from = "up"
-		input_direction_arrow.position = Vector2i.UP * TILE_SIZE
-		input_direction_arrow.target_position = - Vector2i.UP * TILE_SIZE
 	if input_direction == Vector2i.DOWN:
 		from = "down"
-		input_direction_arrow.position = Vector2i.DOWN * TILE_SIZE
-		input_direction_arrow.target_position = - Vector2i.DOWN * TILE_SIZE
 	if output_direction == Vector2i.LEFT:
 		to = "left"
-		output_direction_arrow.target_position = Vector2i.LEFT * TILE_SIZE
 	if output_direction == Vector2i.RIGHT:
 		to = "right"
-		output_direction_arrow.target_position = Vector2i.RIGHT * TILE_SIZE
 	if output_direction == Vector2i.UP:
 		to = "up"
-		output_direction_arrow.target_position = Vector2i.UP * TILE_SIZE
 	if output_direction == Vector2i.DOWN:
 		to = "down"
-		output_direction_arrow.target_position = Vector2i.DOWN * TILE_SIZE
-	
 	if animation_player.has_animation(from + "_" + to):
 		animation_player.play(from + "_" + to)
 	else:
