@@ -1,9 +1,14 @@
 extends PanelContainer
 
-@export var current_building: buildings : get = get_current_building
 
-enum buildings {DRILL, BELT, CONTAINER, FORGE}
+@export var building_texture: TextureRect
+@export var selection_highlight: NinePatchRect
+
+@export var stored_building: PackedScene
 
 
-func get_current_building():
-	return current_building
+func _process(_delta: float) -> void:
+	if stored_building and stored_building == BuildingHandler.current_building:
+		selection_highlight.visible = true
+	else:
+		selection_highlight.visible = false

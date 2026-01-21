@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://byapqwm11hntg"]
 
-[ext_resource type="Script" uid="uid://cu3ohtq3k7mam" path="res://Util/Components/building_handler.gd" id="1_o1wpw"]
+[ext_resource type="Script" uid="uid://cu3ohtq3k7mam" path="res://Util/Autoload/building_handler.gd" id="1_o1wpw"]
 
 [node name="BuildingHandler" type="Node2D" node_paths=PackedStringArray("tilemap_ground_layer")]
 script = ExtResource("1_o1wpw")

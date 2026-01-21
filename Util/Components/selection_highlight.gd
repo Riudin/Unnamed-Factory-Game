@@ -10,13 +10,15 @@ extends Node2D
 func _ready() -> void:
 	GameSettings.connect("show_advanced_building_info_toggled", on_show_advanced_building_info_toggled)
 
-	highlight_sprite.visible = true
+	highlight_sprite.visible = false
 	if output_marker:
-		output_marker.visible = true
+		if not (GameSettings.show_advanced_building_info or BuildingHandler.build_mode):
+			output_marker.visible = false
 
 
 func _on_mouse_detector_mouse_entered() -> void:
-	highlight_sprite.visible = true
+	if not BuildingHandler.build_mode:
+		highlight_sprite.visible = true
 	if output_marker:
 		output_marker.visible = true
 

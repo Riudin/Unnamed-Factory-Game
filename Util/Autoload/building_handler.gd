@@ -1,11 +1,18 @@
-class_name building_handler
 extends Node2D
 
-@export var tilemap_ground_layer: TileMapLayer
+## Node References -> need to be set via script because this is a singleton
+var tilemap_ground_layer: TileMapLayer # Set by TileMap
 
+# TODO: consider turning the references into dictionary - halfway done, next refactor building_handler to work with that
 @onready var conveyor_belt: PackedScene = preload("res://Objects/Scenes/Buildings/conveyor_belt.tscn")
 @onready var giver: PackedScene = preload("res://Objects/Scenes/Buildings/giver.tscn")
 @onready var trash: PackedScene = preload("res://Objects/Scenes/Buildings/trash.tscn")
+
+var buildings: Dictionary = {
+	"conveyor_belt": "res://Objects/Scenes/Buildings/conveyor_belt.tscn",
+	"giver": "res://Objects/Scenes/Buildings/giver.tscn",
+	"trash": "res://Objects/Scenes/Buildings/trash.tscn"
+}
 
 const TILE_SIZE: float = 16.0
 
@@ -25,7 +32,7 @@ var output_direction: Vector2i = Vector2i.RIGHT
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# This whole input one, two, three... section is spaghetti. But eh.. it works TODO: make lasagna instead
+	# This whole input one, two, three... section is spaghetti. But eh.. it works TODO: unspaghetti
 	if event.is_action_pressed("one"):
 		if not build_mode or current_building != conveyor_belt:
 			current_building = conveyor_belt
@@ -87,6 +94,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.is_action_pressed("show_advanced_building_info"):
 			GameSettings.set_show_advanced_building_info(not GameSettings.show_advanced_building_info)
+	
+	if event is InputEventKey:
+		if event.is_action_pressed("cancel_building"):
+			current_building = null
+			build_mode = false
+			preview_active = false
+			clear_preview()
+			preview_building = null
 
 
 func _process(_delta):

@@ -6,11 +6,10 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8cpio"]
 size = Vector2(16, 16)
 
-[node name="SelectionHighlight" type="Node2D" node_paths=PackedStringArray("highlight_sprite", "output_marker", "mouse_detector")]
+[node name="SelectionHighlight" type="Node2D" node_paths=PackedStringArray("highlight_sprite", "mouse_detector")]
 z_index = 1
 script = ExtResource("1_8cpio")
 highlight_sprite = NodePath("HighlightSprite")
-output_marker = NodePath("")
 mouse_detector = NodePath("MouseDetector")
 
 [node name="HighlightSprite" type="Sprite2D" parent="."]
