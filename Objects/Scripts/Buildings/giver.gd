@@ -9,17 +9,24 @@ var tick_counter: int = 0
 
 const TILE_SIZE: float = 16.0
 
-func setup_ports() -> void:
+
+func _init() -> void:
+	setup_output_ports() # must be in init() because we need the output ports to apply rotation in super class before this node is ready
+
+
+func setup_output_ports() -> void:
 	# Giver always has one output port to the right by default
 	var output_port = Port.new()
 	output_port.port_type = Port.PortType.OUTPUT
 	output_port.local_dir = Vector2i.RIGHT
 	output_ports.append(output_port)
 
+
 func _ready():
+	super._ready()
 	TickManager.tick.connect(_on_tick)
-	self.add_to_group("buildings")
-	setup_output_marker()
+	#self.add_to_group("buildings")
+
 
 func _on_tick():
 	tick_counter += 1

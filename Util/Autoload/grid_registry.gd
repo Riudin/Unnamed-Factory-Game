@@ -15,20 +15,35 @@ func is_occupied(tile: Vector2i, check_previews: bool = false) -> bool:
 		
 	return occupied
 
+
 func register_building(tile: Vector2i, building: Node2D, ) -> void:
 	buildings[tile] = building
+
 
 func register_preview_building(tile: Vector2i, building: Node2D) -> void:
 	preview_buildings[tile] = building
 
+
 func unregister_building(tile: Vector2i) -> void:
 	buildings.erase(tile)
+
 
 func unregister_preview_building(tile: Vector2i) -> void:
 	preview_buildings.erase(tile)
 
+
 func get_building(tile: Vector2i) -> Node2D:
 	return buildings.get(tile)
 
+
 func get_preview_building(tile: Vector2i) -> Node2D:
 	return preview_buildings.get(tile)
+
+
+func update_neighbors_ports(tile: Vector2i) -> void:
+	var directions = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+	for dir in directions:
+		var neighbor_tile = tile + dir
+		var neighbor_building = get_building(neighbor_tile)
+		if neighbor_building and neighbor_building.has_method("update_ports"):
+			neighbor_building.update_ports()

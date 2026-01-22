@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lr20anc2mgh0"
-path="res://.godot/imported/drill.png-17fa7044b36cffd5a500bf266d6de67b.ctex"
+uid="uid://cqgfne5vyws2v"
+path="res://.godot/imported/trash_icon.png-f551d2773f0b2785bd48c0a2f3e9741a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/drill.png"
-dest_files=["res://.godot/imported/drill.png-17fa7044b36cffd5a500bf266d6de67b.ctex"]
+source_file="res://Assets/Textures/trash_icon.png"
+dest_files=["res://.godot/imported/trash_icon.png-f551d2773f0b2785bd48c0a2f3e9741a.ctex"]
 
 [params]
 

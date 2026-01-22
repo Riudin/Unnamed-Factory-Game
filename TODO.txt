@@ -1,15 +1,28 @@
 Features:
 
-- implement belt merging
+- Belt Animations
+- rotate selected building
+- rotate while dragging belts
+- click builing to display info
+- let there be items
+- select building by clicking toolbar
+- implement splitter
+- implement combiner
+- implement underground belt
+- implement sounds
+- add more items
+- implement storage building
+- implement power system
+- implement research system
+- implement inventory UI
+- implement crafting system
 
 Next Tasks:
 
-- set visuals again
-- set output arrow correctly again
-- set toolbar selection highlight correctly again
+- implement items
 
 Bugs:
 
-- belt preview stays red if on existing belt and then rotated. Should turn green as soon as direction is different to buit belt
+- belt preview sometimes stays red if on existing belt and then rotated. Should turn green as soon as direction is different to buit belt
 - preview not refreshed often enough. if you move mouse fast, preview gets rendered to seldom
-- none, perfect game.
+- rotating while drag placing belts is ... interesting

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cwkfo7h8kvmwm"]
 
 [ext_resource type="Script" uid="uid://cv35ws1qecsn" path="res://Objects/Scripts/Buildings/trash.gd" id="1_oof3i"]
-[ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/container.png" id="2_208qj"]
+[ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/trash_icon.png" id="2_208qj"]
 [ext_resource type="PackedScene" uid="uid://dpias8oq1vqm7" path="res://Util/Components/selection_highlight.tscn" id="3_57tof"]
 
 [node name="Trash" type="Node2D" node_paths=PackedStringArray("selection_highlight")]

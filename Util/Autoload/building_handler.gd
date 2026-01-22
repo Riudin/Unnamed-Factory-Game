@@ -9,6 +9,12 @@ var buildings: Dictionary = {
 	"trash": "res://Objects/Scenes/Buildings/trash.tscn"
 }
 
+var building_icons: Dictionary = {
+	"conveyor_belt": "res://Assets/Textures/conveyor_belt_icon.png",
+	"giver": "res://Assets/Textures/giver_icon.png",
+	"trash": "res://Assets/Textures/trash_icon.png"
+}
+
 const TILE_SIZE: float = 16.0
 
 var current_building_path: String
@@ -191,8 +197,8 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 			and current_building_path == buildings["conveyor_belt"] \
 			and GridRegistry.get_building(tile) is ConveyorBelt \
 			and GridRegistry.get_building(tile).output_ports[0].local_dir != _get_orientation_from_rotation():
-			can_build = true
 			remove_building(tile)
+			can_build = true
 
 	if not can_build:
 		return
@@ -219,6 +225,9 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 	
 	get_tree().current_scene.add_child(new_building)
 
+	# Update all 4 neighbors input and output ports
+	GridRegistry.update_neighbors_ports(tile)
+	
 
 func remove_building(tile: Vector2i):
 	var building = GridRegistry.get_building(tile)
@@ -243,6 +252,12 @@ func _get_orientation_from_rotation() -> Vector2i:
 
 func get_mouse_tile() -> Vector2i:
 	return tilemap_ground_layer.local_to_map(get_global_mouse_position())
+
+
+func get_building_icon(building_name: String) -> Texture2D:
+	if building_name in building_icons:
+		return load(building_icons[building_name])
+	return null
 
 
 func update_preview(tile: Vector2i = get_mouse_tile()):

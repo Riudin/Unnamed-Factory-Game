@@ -14,7 +14,7 @@ var output_direction: Vector2i = Vector2i.RIGHT
 
 
 func _ready() -> void:
-	pass
+	setup_output_marker()
 
 
 func rotate_output_ports(clockwise: bool = true) -> void:

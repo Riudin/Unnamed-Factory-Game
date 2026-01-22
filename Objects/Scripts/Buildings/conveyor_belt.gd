@@ -32,10 +32,8 @@ func _ready():
 	tree_exiting.connect(_on_tree_exiting)
 	TickManager.tick.connect(_on_tick)
 
-
 	setup_input_ports()
-	get_orientation()
-	setup_output_marker()
+	set_visuals()
 
 '''
 	for port in input_ports:
@@ -45,6 +43,9 @@ func _ready():
 '''
 
 func setup_output_ports() -> void:
+	if output_ports.size() > 0:
+		return # already set up
+		
 	# ConveyorBelt always has one output port that defaults to right
 	var output_port = Port.new()
 	output_port.port_type = Port.PortType.OUTPUT
@@ -80,24 +81,24 @@ func setup_input_ports() -> void:
 		input_ports.append(input_port)
 
 
-# TODO: input_direction is deprecated, so remove this after full refactor
-func get_orientation():
-	# Determine input direction(s) based on actual input ports
-	var input_dirs: Array[Vector2i] = []
-	for port in input_ports:
-		input_dirs.append(port.local_dir)
+# # TODO: input_direction is deprecated, so remove this after full refactor
+# func get_orientation():
+# 	# Determine input direction(s) based on actual input ports
+# 	var input_dirs: Array[Vector2i] = []
+# 	for port in input_ports:
+# 		input_dirs.append(port.local_dir)
 	
-	if input_dirs.is_empty():
-		# No inputs, default input direction opposite to output
-		input_direction = - output_ports[0].local_dir
-		print("ERROR: on Conveyor Belt " + str(self) + ": no input direction found!")
-	elif input_dirs.size() == 1:
-		input_direction = input_dirs[0]
-	else:
-		# Multiple inputs - for now, use the first one (we can improve this later)
-		input_direction = input_dirs[0]
+# 	if input_dirs.is_empty():
+# 		# No inputs, default input direction opposite to output
+# 		input_direction = - output_ports[0].local_dir
+# 		print("ERROR: on Conveyor Belt " + str(self) + ": no input direction found!")
+# 	elif input_dirs.size() == 1:
+# 		input_direction = input_dirs[0]
+# 	else:
+# 		# Multiple inputs - for now, use the first one (we can improve this later)
+# 		input_direction = input_dirs[0]
 	
-	set_visuals() # CONTINUE HERE, get correct visuals for multiple outputs
+# 	set_visuals() # CONTINUE HERE, get correct visuals for multiple outputs
 
 
 func set_visuals():
@@ -148,6 +149,12 @@ func set_visuals():
 	else:
 		modulate = Color.PURPLE # purple to show error
 		animation_player.play("left_right") # default animation
+		print("Animation " + str(anim_to_play) + " not found.")
+
+
+func update_ports() -> void:
+	setup_input_ports()
+	set_visuals()
 
 ###################
 ## Item Handling ##
