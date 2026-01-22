@@ -8,7 +8,7 @@ extends PanelContainer
 
 
 func _process(_delta: float) -> void:
-	if stored_building and stored_building == BuildingHandler.current_building:
+	if stored_building and str(stored_building) == BuildingHandler.current_building_path:
 		selection_highlight.visible = true
 	else:
 		selection_highlight.visible = false

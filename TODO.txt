@@ -2,6 +2,14 @@ Features:
 
 - implement belt merging
 
+Next Tasks:
+
+- set visuals again
+- set output arrow correctly again
+- set toolbar selection highlight correctly again
+
 Bugs:
 
+- belt preview stays red if on existing belt and then rotated. Should turn green as soon as direction is different to buit belt
+- preview not refreshed often enough. if you move mouse fast, preview gets rendered to seldom
 - none, perfect game.

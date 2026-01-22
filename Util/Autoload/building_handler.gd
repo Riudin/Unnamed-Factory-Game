@@ -3,11 +3,6 @@ extends Node2D
 ## Node References -> need to be set via script because this is a singleton
 var tilemap_ground_layer: TileMapLayer # Set by TileMap
 
-# TODO: consider turning the references into dictionary - halfway done, next refactor building_handler to work with that
-@onready var conveyor_belt: PackedScene = preload("res://Objects/Scenes/Buildings/conveyor_belt.tscn")
-@onready var giver: PackedScene = preload("res://Objects/Scenes/Buildings/giver.tscn")
-@onready var trash: PackedScene = preload("res://Objects/Scenes/Buildings/trash.tscn")
-
 var buildings: Dictionary = {
 	"conveyor_belt": "res://Objects/Scenes/Buildings/conveyor_belt.tscn",
 	"giver": "res://Objects/Scenes/Buildings/giver.tscn",
@@ -16,7 +11,7 @@ var buildings: Dictionary = {
 
 const TILE_SIZE: float = 16.0
 
-var current_building: PackedScene
+var current_building_path: String
 var preview_building: Node2D = null
 
 var last_preview_tile: Vector2i # defaults to (0,0), keep in mind to check if that causes problems (also never resets)
@@ -28,36 +23,39 @@ var build_mode: bool = false
 var is_building: bool = false
 var is_removing: bool = false
 
-var output_direction: Vector2i = Vector2i.RIGHT
+var rotation_count: int = 0 # Track number of rotations for output port direction
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	# This whole input one, two, three... section is spaghetti. But eh.. it works TODO: unspaghetti
 	if event.is_action_pressed("one"):
-		if not build_mode or current_building != conveyor_belt:
-			current_building = conveyor_belt
+		if not build_mode or current_building_path != buildings["conveyor_belt"]:
+			current_building_path = buildings["conveyor_belt"]
+			rotation_count = 0
 			build_mode = true
 			update_preview()
 		else:
-			current_building = null
+			current_building_path = ""
 			build_mode = false
 
 	elif event.is_action_pressed("two"):
-		if not build_mode or current_building != giver:
-			current_building = giver
+		if not build_mode or current_building_path != buildings["giver"]:
+			current_building_path = buildings["giver"]
+			rotation_count = 0
 			build_mode = true
 			update_preview()
 		else:
-			current_building = null
+			current_building_path = ""
 			build_mode = false
 	
 	elif event.is_action_pressed("three"):
-		if not build_mode or current_building != trash:
-			current_building = trash
+		if not build_mode or current_building_path != buildings["trash"]:
+			current_building_path = buildings["trash"]
+			rotation_count = 0
 			build_mode = true
 			update_preview()
 		else:
-			current_building = null
+			current_building_path = ""
 			build_mode = false
 
 
@@ -71,7 +69,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			place_building(building_origin_tile)
 			update_preview(building_origin_tile)
 
-			if current_building != conveyor_belt:
+			if current_building_path != buildings["conveyor_belt"]:
 				is_building = false
 			
 		if build_mode and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
@@ -84,11 +82,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			is_removing = false
 
 	if event is InputEventKey:
-		if event.is_action_pressed("rotate_left"):
-			output_direction = Vector2i(output_direction.y, -output_direction.x)
+		if event.is_action_pressed("rotate_left") and current_building_path != "":
+			rotation_count -= 1
 			update_preview()
-		elif event.is_action_pressed("rotate_right"):
-			output_direction = Vector2i(-output_direction.y, output_direction.x)
+		elif event.is_action_pressed("rotate_right") and current_building_path != "":
+			rotation_count += 1
 			update_preview()
 	
 	if event is InputEventKey:
@@ -97,7 +95,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	if event is InputEventKey:
 		if event.is_action_pressed("cancel_building"):
-			current_building = null
+			current_building_path = ""
 			build_mode = false
 			preview_active = false
 			clear_preview()
@@ -105,13 +103,15 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(_delta):
-	if build_mode and current_building != null and preview_active == false:
+	# if we are in build mode and have a building selected, activate preview. if not, deactivate preview
+	if build_mode and current_building_path != "" and preview_active == false:
 		preview_active = true
-	elif (not build_mode or current_building == null) and preview_active == true:
+	elif (not build_mode or current_building_path == "") and preview_active == true:
 		preview_active = false
 		clear_preview()
 		preview_building = null
 	
+	# update preview when changing mouse tile while it's active and we're not actively building
 	if not is_building and preview_active:
 		var mouse_tile: Vector2i = get_mouse_tile()
 		if mouse_tile != last_preview_tile:
@@ -121,8 +121,11 @@ func _process(_delta):
 		var mouse_tile: Vector2i = get_mouse_tile()
 		var building_tile: Vector2i = mouse_tile
 
+		# Calculate building direction based on rotation_count
+		var building_orientation = _get_orientation_from_rotation()
+
 		if mouse_tile != building_origin_tile:
-			if output_direction == Vector2i.RIGHT or output_direction == Vector2i.LEFT:
+			if building_orientation == Vector2i.RIGHT or building_orientation == Vector2i.LEFT:
 				building_tile = Vector2i(mouse_tile.x, building_origin_tile.y)
 			else:
 				building_tile = Vector2i(building_origin_tile.x, mouse_tile.y)
@@ -140,10 +143,10 @@ func _process(_delta):
 			# TODO: maybe replace this prototyping abomination with the path function from depr_building_handler when too much free time
 			if distance > 1:
 				for i in range(1, distance):
-					if output_direction == Vector2i.RIGHT: place_building(Vector2i(last_building_tile.x + i, last_building_tile.y))
-					if output_direction == Vector2i.LEFT: place_building(Vector2i(last_building_tile.x - i, last_building_tile.y))
-					if output_direction == Vector2i.UP: place_building(Vector2i(last_building_tile.x, last_building_tile.y - i))
-					if output_direction == Vector2i.DOWN: place_building(Vector2i(last_building_tile.x, last_building_tile.y + i))
+					if building_orientation == Vector2i.RIGHT: place_building(Vector2i(last_building_tile.x + i, last_building_tile.y))
+					if building_orientation == Vector2i.LEFT: place_building(Vector2i(last_building_tile.x - i, last_building_tile.y))
+					if building_orientation == Vector2i.UP: place_building(Vector2i(last_building_tile.x, last_building_tile.y - i))
+					if building_orientation == Vector2i.DOWN: place_building(Vector2i(last_building_tile.x, last_building_tile.y + i))
 
 			last_building_tile = building_tile
 			
@@ -157,7 +160,7 @@ func show_preview(tile: Vector2i):
 	if GridRegistry.is_occupied(tile, true):
 		if preview_building and preview_building is ConveyorBelt \
 			and GridRegistry.get_building(tile) is ConveyorBelt \
-			and GridRegistry.get_building(tile).output_direction != output_direction:
+			and GridRegistry.get_building(tile).output_ports[0].local_dir != preview_building.output_ports[0].local_dir:
 			can_build = true
 		else:
 			can_build = false
@@ -182,22 +185,29 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 	if not is_preview and GridRegistry.is_occupied(tile):
 		can_build = false
 
-		if current_building != null \
-			and current_building == conveyor_belt \
+		# you can overwrite specifically conveyor belts if you want to place one with a different direction.
+		# TODO: when rotation of already placed buildings is implemented, maybe just rotate instead
+		if current_building_path != "" \
+			and current_building_path == buildings["conveyor_belt"] \
 			and GridRegistry.get_building(tile) is ConveyorBelt \
-			and GridRegistry.get_building(tile).output_direction != output_direction:
+			and GridRegistry.get_building(tile).output_ports[0].local_dir != _get_orientation_from_rotation():
 			can_build = true
 			remove_building(tile)
 
 	if not can_build:
 		return
 
+	var scene = load(current_building_path)
 	var snapped_world_position: Vector2i = tilemap_ground_layer.to_global(tilemap_ground_layer.map_to_local(tile))
 	
-	var new_building = current_building.instantiate()
+	var new_building = scene.instantiate()
 	new_building.global_position = snapped_world_position
 	new_building.tile_coordinates = tile
-	new_building.output_direction = output_direction
+	
+	# Apply rotations to output ports
+	for _i in range(rotation_count % 4):
+		new_building.rotate_output_ports(true)
+	
 	new_building.modulate = color
 	if is_preview:
 		new_building.add_to_group("preview")
@@ -215,6 +225,20 @@ func remove_building(tile: Vector2i):
 	if building:
 		building.unregister()
 		building.queue_free()
+
+
+func _get_orientation_from_rotation() -> Vector2i:
+	var rotations = rotation_count % 4
+	match rotations:
+		0:
+			return Vector2i.RIGHT
+		1:
+			return Vector2i.DOWN
+		2:
+			return Vector2i.LEFT
+		3:
+			return Vector2i.UP
+	return Vector2i.RIGHT
 
 
 func get_mouse_tile() -> Vector2i:

@@ -9,6 +9,13 @@ var tick_counter: int = 0
 
 const TILE_SIZE: float = 16.0
 
+func setup_ports() -> void:
+	# Giver always has one output port to the right by default
+	var output_port = Port.new()
+	output_port.port_type = Port.PortType.OUTPUT
+	output_port.local_dir = Vector2i.RIGHT
+	output_ports.append(output_port)
+
 func _ready():
 	TickManager.tick.connect(_on_tick)
 	self.add_to_group("buildings")
@@ -35,7 +42,8 @@ func produce_item():
 
 
 func get_output_belt():
-	var target_pos = global_position + output_direction * TILE_SIZE
+	var output_dir = output_ports[0].local_dir if output_ports.size() > 0 else Vector2i.RIGHT
+	var target_pos = global_position + output_dir * TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
 		if belt.global_position.distance_to(target_pos) < TILE_SIZE / 2:
