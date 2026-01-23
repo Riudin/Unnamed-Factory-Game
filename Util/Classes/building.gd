@@ -7,10 +7,7 @@ extends Node2D
 var tile_coordinates: Vector2i
 var input_ports: Array[Port] = []
 var output_ports: Array[Port] = []
-
-# Deprecated - kept for compatibility during transition
-var input_direction: Vector2i = Vector2i.LEFT
-var output_direction: Vector2i = Vector2i.RIGHT
+var inventory: Array[ItemResource]
 
 
 func _ready() -> void:
@@ -24,9 +21,6 @@ func rotate_output_ports(clockwise: bool = true) -> void:
 			port.local_dir = Vector2i(-port.local_dir.y, port.local_dir.x)
 		else:
 			port.local_dir = Vector2i(port.local_dir.y, -port.local_dir.x)
-	# Keep deprecated variable in sync
-	if output_ports.size() > 0:
-		output_direction = output_ports[0].local_dir
 
 
 func register(preview: bool = false):

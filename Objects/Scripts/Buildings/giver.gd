@@ -2,12 +2,12 @@ class_name Giver
 extends Building
 
 @export var output_per_second: int = 1
-@export var item_resource: ItemResource
+@export var produced_item: ItemResource
 @export var item_node_scene: PackedScene
 
 var tick_counter: int = 0
 
-const TILE_SIZE: float = 16.0
+#const TILE_SIZE: float = 16.0
 
 
 func _init() -> void:
@@ -25,7 +25,6 @@ func setup_output_ports() -> void:
 func _ready():
 	super._ready()
 	TickManager.tick.connect(_on_tick)
-	#self.add_to_group("buildings")
 
 
 func _on_tick():
@@ -43,17 +42,17 @@ func produce_item():
 		return
 	
 	var item = item_node_scene.instantiate()
-	item.item_resource = item_resource
+	item.item_resource = produced_item
 	get_tree().current_scene.add_child(item) # später ort ändern
 	belt.add_item(item, 0.0)
 
 
 func get_output_belt():
 	var output_dir = output_ports[0].local_dir if output_ports.size() > 0 else Vector2i.RIGHT
-	var target_pos = global_position + output_dir * TILE_SIZE
+	var target_pos = global_position + output_dir * Constants.TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
-		if belt.global_position.distance_to(target_pos) < TILE_SIZE / 2:
+		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
 			return belt
 	
 	return null

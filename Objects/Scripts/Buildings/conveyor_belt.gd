@@ -15,7 +15,7 @@ var grid_pos: Vector2i
 var items: Array = []
 var next_belt: ConveyorBelt = null
 
-const TILE_SIZE: float = 16.0
+#const TILE_SIZE: float = 16.0
 
 
 #################################
@@ -190,12 +190,12 @@ func _advance_items():
 
 func _get_next_belt() -> ConveyorBelt:
 	var output_dir = output_ports[0].local_dir
-	var target_pos: Vector2i = global_position + output_dir * TILE_SIZE
+	var target_pos: Vector2i = global_position + output_dir * Constants.TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
 		if belt == self:
 			continue
-		if belt.global_position.distance_to(target_pos) < TILE_SIZE / 2:
+		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
 			return belt
 	
 	return null
@@ -236,7 +236,7 @@ func _point_from_progress(progress: float) -> Vector2i:
 		input_dir = input_ports[0].local_dir
 	
 	var output_dir = output_ports[0].local_dir
-	var start: Vector2 = global_position + input_dir * TILE_SIZE
+	var start: Vector2 = global_position + input_dir * Constants.TILE_SIZE
 	var end: Vector2 = Vector2i(global_position) + output_dir
 	return (start.lerp(end, progress) as Vector2i)
 

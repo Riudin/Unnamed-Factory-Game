@@ -8,7 +8,7 @@ signal item_taken(item)
 
 var tick_counter: int = 0
 
-const TILE_SIZE: float = 16.0
+#const TILE_SIZE: float = 16.0
 
 
 func _ready():
@@ -37,10 +37,10 @@ func take_in_item():
 	
 func get_input_belt():
 	var input_dir = input_ports[0].local_dir if input_ports.size() > 0 else Vector2i.LEFT
-	var target_pos = global_position + input_dir * TILE_SIZE
+	var target_pos = global_position + input_dir * Constants.TILE_SIZE
 	
 	for belt in get_tree().get_nodes_in_group("belts"):
-		if belt.global_position.distance_to(target_pos) < TILE_SIZE / 2:
+		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
 			return belt
 	
 	return null

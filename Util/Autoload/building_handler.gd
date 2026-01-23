@@ -3,20 +3,6 @@ extends Node2D
 ## Node References -> need to be set via script because this is a singleton
 var tilemap_ground_layer: TileMapLayer # Set by TileMap
 
-var buildings: Dictionary = {
-	"conveyor_belt": "res://Objects/Scenes/Buildings/conveyor_belt.tscn",
-	"giver": "res://Objects/Scenes/Buildings/giver.tscn",
-	"trash": "res://Objects/Scenes/Buildings/trash.tscn"
-}
-
-var building_icons: Dictionary = {
-	"conveyor_belt": "res://Assets/Textures/conveyor_belt_icon.png",
-	"giver": "res://Assets/Textures/giver_icon.png",
-	"trash": "res://Assets/Textures/trash_icon.png"
-}
-
-const TILE_SIZE: float = 16.0
-
 var current_building_path: String
 var preview_building: Node2D = null
 
@@ -35,8 +21,8 @@ var rotation_count: int = 0 # Track number of rotations for output port directio
 func _unhandled_input(event: InputEvent) -> void:
 	# This whole input one, two, three... section is spaghetti. But eh.. it works TODO: unspaghetti
 	if event.is_action_pressed("one"):
-		if not build_mode or current_building_path != buildings["conveyor_belt"]:
-			current_building_path = buildings["conveyor_belt"]
+		if not build_mode or current_building_path != Constants.BUILDING_SCENE_PATH["conveyor_belt"]:
+			current_building_path = Constants.BUILDING_SCENE_PATH["conveyor_belt"]
 			rotation_count = 0
 			build_mode = true
 			update_preview()
@@ -45,8 +31,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			build_mode = false
 
 	elif event.is_action_pressed("two"):
-		if not build_mode or current_building_path != buildings["giver"]:
-			current_building_path = buildings["giver"]
+		if not build_mode or current_building_path != Constants.BUILDING_SCENE_PATH["giver"]:
+			current_building_path = Constants.BUILDING_SCENE_PATH["giver"]
 			rotation_count = 0
 			build_mode = true
 			update_preview()
@@ -55,8 +41,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			build_mode = false
 	
 	elif event.is_action_pressed("three"):
-		if not build_mode or current_building_path != buildings["trash"]:
-			current_building_path = buildings["trash"]
+		if not build_mode or current_building_path != Constants.BUILDING_SCENE_PATH["trash"]:
+			current_building_path = Constants.BUILDING_SCENE_PATH["trash"]
 			rotation_count = 0
 			build_mode = true
 			update_preview()
@@ -75,7 +61,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			place_building(building_origin_tile)
 			update_preview(building_origin_tile)
 
-			if current_building_path != buildings["conveyor_belt"]:
+			if current_building_path != Constants.BUILDING_SCENE_PATH["conveyor_belt"]:
 				is_building = false
 			
 		if build_mode and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
@@ -194,7 +180,7 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 		# you can overwrite specifically conveyor belts if you want to place one with a different direction.
 		# TODO: when rotation of already placed buildings is implemented, maybe just rotate instead
 		if current_building_path != "" \
-			and current_building_path == buildings["conveyor_belt"] \
+			and current_building_path == Constants.BUILDING_SCENE_PATH["conveyor_belt"] \
 			and GridRegistry.get_building(tile) is ConveyorBelt \
 			and GridRegistry.get_building(tile).output_ports[0].local_dir != _get_orientation_from_rotation():
 			remove_building(tile)
@@ -255,8 +241,8 @@ func get_mouse_tile() -> Vector2i:
 
 
 func get_building_icon(building_name: String) -> Texture2D:
-	if building_name in building_icons:
-		return load(building_icons[building_name])
+	if building_name in Constants.BUILDING_ICON_PATH:
+		return load(Constants.BUILDING_ICON_PATH[building_name])
 	return null
 
 

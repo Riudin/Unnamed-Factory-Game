@@ -8,7 +8,7 @@ extends Node2D
 @onready var giver: PackedScene = preload("res://Objects/Scenes/Buildings/giver.tscn")
 @onready var trash: PackedScene = preload("res://Objects/Scenes/Buildings/trash.tscn")
 
-const TILE_SIZE: float = 16.0
+#const TILE_SIZE: float = 16.0
 
 var current_building: PackedScene
 var preview_active: bool = false
