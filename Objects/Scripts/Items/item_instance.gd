@@ -1,7 +1,7 @@
 class_name ItemInstance
 extends Node2D
 
-var item_resource: ItemResource
+var item_resource: ItemData
 var sprite: Sprite2D
 var display_name: String
 

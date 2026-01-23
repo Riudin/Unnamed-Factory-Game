@@ -2,12 +2,13 @@ class_name Giver
 extends Building
 
 @export var output_per_second: int = 1
-@export var produced_item: ItemResource
-@export var item_node_scene: PackedScene
+@export var produced_item: ItemData
+
+@onready var item_instance_scene = preload(Constants.OTHER_SCENE_PATH["item_instance"])
+
+var inventory: Inventory = Inventory.new()
 
 var tick_counter: int = 0
-
-#const TILE_SIZE: float = 16.0
 
 
 func _init() -> void:
@@ -36,18 +37,36 @@ func _on_tick():
 
 
 func produce_item():
-	var belt: Node2D = get_output_belt()
-	
-	if belt == null or not belt.can_accept_item():
+	if is_preview:
 		return
+
+	if produced_item == null:
+		printerr("Giver has no produced_item assigned")
+		return
+
+	inventory.add(produced_item.id, 1)
+
+	# Create visual representation and place on output belt
+	if output_ports[0].connected_port == null: # TODO: checks only first port. In the future we need to check more
+		return
+
 	
-	var item = item_node_scene.instantiate()
-	item.item_resource = produced_item
-	get_tree().current_scene.add_child(item) # später ort ändern
-	belt.add_item(item, 0.0)
+	var item_instance = item_instance_scene.instantiate() as ItemInstance
+	item_instance.item_resource = produced_item
+
+	# var output_belt = get_output_belt()
+	# if output_belt != null:
+	# 	get_tree().current_scene.add_child(item_instance)
+	# 	output_belt.add_item(item_instance, 0.0)
+	# else:
+	# 	# Item produced but no belt connected - queue for deletion or store visually
+	# 	item_instance.queue_free()
 
 
 func get_output_belt():
+	pass
+	# old code
+	'''
 	var output_dir = output_ports[0].local_dir if output_ports.size() > 0 else Vector2i.RIGHT
 	var target_pos = global_position + output_dir * Constants.TILE_SIZE
 	
@@ -56,3 +75,4 @@ func get_output_belt():
 			return belt
 	
 	return null
+	'''

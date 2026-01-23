@@ -35,12 +35,6 @@ func _ready():
 	setup_input_ports()
 	set_visuals()
 
-'''
-	for port in input_ports:
-		print("Input Ports: " + str(port.local_dir))
-	for port in output_ports:
-		print("Output Ports: " + str(port.local_dir))
-'''
 
 func setup_output_ports() -> void:
 	if output_ports.size() > 0:

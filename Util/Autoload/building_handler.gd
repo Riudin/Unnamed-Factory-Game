@@ -207,17 +207,29 @@ func place_building(tile: Vector2i, color: Color = Color.WHITE, is_preview: bool
 		preview_building = new_building
 	else:
 		new_building.register()
-		#clear_preview() # maybe unnecessary because at this point we should have already deactivated preview mode
+		new_building.is_preview = false
+		new_building.connect_to_neighbors() # ADD THIS LINE
 	
 	get_tree().current_scene.add_child(new_building)
 
 	# Update all 4 neighbors input and output ports
 	GridRegistry.update_neighbors_ports(tile)
 	
+	# Reconnect neighbors since their ports may have changed
+	for direction in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]: # ADD THIS SECTION
+		var neighbor = GridRegistry.get_building(tile + direction)
+		if neighbor and neighbor is Building:
+			neighbor.connect_to_neighbors()
 
 func remove_building(tile: Vector2i):
 	var building = GridRegistry.get_building(tile)
 	if building:
+		# Disconnect all ports before removing
+		for port in building.output_ports + building.input_ports:
+			if port.connected_port:
+				port.connected_port.connected_port = null
+				port.connected_port = null
+		
 		building.unregister()
 		building.queue_free()
 

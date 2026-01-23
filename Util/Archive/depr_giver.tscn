@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b0pcek6usjqqx" path="res://Objects/Scripts/Buildings/giver.gd" id="1_rwydo"]
 [ext_resource type="Resource" uid="uid://31tj0me2pjdk" path="res://Resources/Items/stone.tres" id="2_cfwvu"]
-[ext_resource type="PackedScene" uid="uid://bi36o2p0uyqpk" path="res://Objects/Scenes/Items/item_node.tscn" id="3_sjr25"]
+[ext_resource type="PackedScene" uid="uid://bi36o2p0uyqpk" path="res://Objects/Scenes/Items/item_instance.tscn" id="3_sjr25"]
 [ext_resource type="Texture2D" uid="uid://lr20anc2mgh0" path="res://Assets/Textures/giver_icon.png" id="4_xbgwc"]
 [ext_resource type="PackedScene" uid="uid://dbkcsy54dlucw" path="res://Util/Archive/depr_belt_detector.tscn" id="5_lniod"]
 

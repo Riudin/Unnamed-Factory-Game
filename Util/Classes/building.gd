@@ -7,11 +7,17 @@ extends Node2D
 var tile_coordinates: Vector2i
 var input_ports: Array[Port] = []
 var output_ports: Array[Port] = []
-var inventory: Array[ItemResource]
+
+var is_preview: bool = true
 
 
 func _ready() -> void:
 	setup_output_marker()
+	print(self)
+	for port in input_ports:
+		prints(str(port.local_dir), "connected to", str(port.connected_port))
+	for port in output_ports:
+		prints(str(port.local_dir), "connected to", str(port.connected_port))
 
 
 func rotate_output_ports(clockwise: bool = true) -> void:
@@ -46,6 +52,29 @@ func setup_output_marker():
 		selection_highlight.output_marker.look_at(Vector2i(global_position) + output_dir)
 	
 
-# Maybe need this later?
-# func _exit_tree() -> void:
-# 	unregister()
+func connect_to_neighbors() -> void:
+	var neighbor_dirs = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+
+	for direction in neighbor_dirs:
+		var neighbor_tile = tile_coordinates + direction
+		var neighbor = GridRegistry.get_building(neighbor_tile)
+			
+		if not neighbor or not neighbor is Building:
+			continue
+        
+		# Try to connect our output ports to neighbor's input ports
+		for our_output in output_ports:
+			if our_output.local_dir == direction: # Our port points at neighbor
+				for neighbor_input in neighbor.input_ports:
+					if neighbor_input.local_dir == -direction: # Neighbor port points back at us
+						# Make bidirectional connection
+						our_output.connected_port = neighbor_input
+						neighbor_input.connected_port = our_output
+
+		# Try to connect our input ports to neighbor's output ports
+		for our_input in input_ports:
+			if our_input.local_dir == direction: # Our port faces neighbor
+				for neighbor_output in neighbor.output_ports:
+					if neighbor_output.local_dir == -direction: # Neighbor output points at us
+						our_input.connected_port = neighbor_output
+						neighbor_output.connected_port = our_input

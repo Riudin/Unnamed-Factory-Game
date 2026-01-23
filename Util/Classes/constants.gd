@@ -13,3 +13,7 @@ const BUILDING_ICON_PATH: Dictionary = {
 	"giver": "uid://lr20anc2mgh0",
 	"trash": "uid://cqgfne5vyws2v"
 }
+
+const OTHER_SCENE_PATH: Dictionary = {
+	"item_instance": "uid://bi36o2p0uyqpk"
+}

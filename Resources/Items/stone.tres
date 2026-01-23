@@ -1,10 +1,11 @@
-[gd_resource type="Resource" script_class="ItemResource" load_steps=3 format=3 uid="uid://31tj0me2pjdk"]
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3 uid="uid://31tj0me2pjdk"]
 
 [ext_resource type="Texture2D" uid="uid://6444wp5nribx" path="res://Assets/Textures/stone.png" id="1_iovnn"]
-[ext_resource type="Script" uid="uid://dy5gjrlslxq4v" path="res://Util/Items/item_resource.gd" id="1_oywwt"]
+[ext_resource type="Script" uid="uid://dy5gjrlslxq4v" path="res://Util/Items/item_data.gd" id="2_ws5bn"]
 
 [resource]
-script = ExtResource("1_oywwt")
+script = ExtResource("2_ws5bn")
+id = &"stone"
 display_name = "Stone"
 icon = ExtResource("1_iovnn")
 metadata/_custom_type_script = "uid://dy5gjrlslxq4v"

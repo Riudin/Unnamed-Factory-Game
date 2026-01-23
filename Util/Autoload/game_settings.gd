@@ -1,7 +1,7 @@
 extends Node
 
 
-var show_advanced_building_info: bool = false: set = set_show_advanced_building_info
+var show_advanced_building_info: bool = true: set = set_show_advanced_building_info
 
 signal show_advanced_building_info_toggled
 
