@@ -13,11 +13,6 @@ var is_preview: bool = true
 
 func _ready() -> void:
 	setup_output_marker()
-	print(self)
-	for port in input_ports:
-		prints(str(port.local_dir), "connected to", str(port.connected_port))
-	for port in output_ports:
-		prints(str(port.local_dir), "connected to", str(port.connected_port))
 
 
 func rotate_output_ports(clockwise: bool = true) -> void:
@@ -78,3 +73,8 @@ func connect_to_neighbors() -> void:
 					if neighbor_output.local_dir == -direction: # Neighbor output points at us
 						our_input.connected_port = neighbor_output
 						neighbor_output.connected_port = our_input
+
+
+func get_item_data(_item_id: String) -> ItemData:
+	# Override in subclasses that produce items
+	return null

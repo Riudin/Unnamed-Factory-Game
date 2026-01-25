@@ -1,7 +1,6 @@
-[gd_scene load_steps=13 format=4 uid="uid://b7pxr3lx7wi2l"]
+[gd_scene load_steps=12 format=4 uid="uid://b7pxr3lx7wi2l"]
 
 [ext_resource type="Texture2D" uid="uid://c0e6q2raer5jh" path="res://Assets/Textures/grass.png" id="1_jjgbg"]
-[ext_resource type="Script" uid="uid://mk67x32tv1df" path="res://Scenes/main.gd" id="1_ynf5e"]
 [ext_resource type="Texture2D" uid="uid://cv8l42yle4sqq" path="res://Assets/Textures/rock.png" id="2_bo1nx"]
 [ext_resource type="Script" uid="uid://8b780ht7r4sa" path="res://Scenes/tile_map.gd" id="2_d1ilt"]
 [ext_resource type="PackedScene" uid="uid://0ju4rdgwo8aw" path="res://Util/Components/camera_controller.tscn" id="5_d1ilt"]
@@ -25,7 +24,6 @@ texture = ExtResource("2_bo1nx")
 sources/0 = SubResource("TileSetAtlasSource_8gbba")
 
 [node name="Main" type="Node2D"]
-script = ExtResource("1_ynf5e")
 
 [node name="GameManager" type="Node" parent="."]
 

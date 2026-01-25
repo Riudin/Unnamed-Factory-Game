@@ -1,12 +1,12 @@
 class_name Giver
 extends Building
 
-@export var output_per_second: int = 1
+@export var output_per_second: float = 1.0
 @export var produced_item: ItemData
 
 @onready var item_instance_scene = preload(Constants.OTHER_SCENE_PATH["item_instance"])
 
-var inventory: Inventory = Inventory.new()
+var output_inventory: Inventory = Inventory.new(): get = get_output_inventory
 
 var tick_counter: int = 0
 
@@ -29,50 +29,34 @@ func _ready():
 
 
 func _on_tick():
+	if self.is_preview:
+		return
+
 	tick_counter += 1
 	
 	if tick_counter >= TickManager.tick_rate / output_per_second:
 		tick_counter = 0
-		produce_item()
+		if output_ports[0].connected_port != null: # TODO: this is a dirty workaround to avoid the giver to produce anything when its not connected to a belt.
+													# this and the stacksize of 1 makes having an inventory obsolete right now.
+			produce_item()
 
 
 func produce_item():
-	if is_preview:
-		return
-
 	if produced_item == null:
 		printerr("Giver has no produced_item assigned")
 		return
 
-	inventory.add(produced_item.id, 1)
-
-	# Create visual representation and place on output belt
-	if output_ports[0].connected_port == null: # TODO: checks only first port. In the future we need to check more
-		return
-
-	
-	var item_instance = item_instance_scene.instantiate() as ItemInstance
-	item_instance.item_resource = produced_item
-
-	# var output_belt = get_output_belt()
-	# if output_belt != null:
-	# 	get_tree().current_scene.add_child(item_instance)
-	# 	output_belt.add_item(item_instance, 0.0)
-	# else:
-	# 	# Item produced but no belt connected - queue for deletion or store visually
-	# 	item_instance.queue_free()
+	output_inventory.add(produced_item.id, 1)
 
 
-func get_output_belt():
-	pass
-	# old code
-	'''
-	var output_dir = output_ports[0].local_dir if output_ports.size() > 0 else Vector2i.RIGHT
-	var target_pos = global_position + output_dir * Constants.TILE_SIZE
-	
-	for belt in get_tree().get_nodes_in_group("belts"):
-		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
-			return belt
-	
+## For other buildings and conveyor belts to get access to this inventory
+func get_output_inventory():
+	return output_inventory
+
+
+## For other buildings and conveyor belts to get access of the item data of the item that is produced
+func get_item_data(item_id: String) -> ItemData:
+	# Return the item data if it matches what this giver produces
+	if produced_item and produced_item.id == item_id:
+		return produced_item
 	return null
-	'''

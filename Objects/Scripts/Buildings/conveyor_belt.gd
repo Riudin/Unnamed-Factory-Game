@@ -2,20 +2,20 @@ class_name ConveyorBelt
 extends Building
 
 
-@export var debug: bool = false
+#@export var debug: bool = false
 
 @export_group("References")
 @export var animation_player: AnimationPlayer
 
 @export_group("Setup")
-@export var speed: float = 2.0 # tiles per second
-@export var min_spacing: float = 16.0 # distance between items on belt # doesn't work yet
+@export var speed: float = 2.0 # items per second
+@export var min_spacing: float = 0.33 # distance between items on belt
 
-var grid_pos: Vector2i
-var items: Array = []
-var next_belt: ConveyorBelt = null
+#var grid_pos: Vector2i
+var item_inventory: Array = []
+#var next_belt: ConveyorBelt = null
 
-#const TILE_SIZE: float = 16.0
+var current_input_index: int = 0 # for round-robin input prioritization
 
 
 #################################
@@ -73,26 +73,6 @@ func setup_input_ports() -> void:
 		input_port.port_type = Port.PortType.INPUT
 		input_port.local_dir = - output_ports[0].local_dir # input_port direction is opposite of our first output_port direction
 		input_ports.append(input_port)
-
-
-# # TODO: input_direction is deprecated, so remove this after full refactor
-# func get_orientation():
-# 	# Determine input direction(s) based on actual input ports
-# 	var input_dirs: Array[Vector2i] = []
-# 	for port in input_ports:
-# 		input_dirs.append(port.local_dir)
-	
-# 	if input_dirs.is_empty():
-# 		# No inputs, default input direction opposite to output
-# 		input_direction = - output_ports[0].local_dir
-# 		print("ERROR: on Conveyor Belt " + str(self) + ": no input direction found!")
-# 	elif input_dirs.size() == 1:
-# 		input_direction = input_dirs[0]
-# 	else:
-# 		# Multiple inputs - for now, use the first one (we can improve this later)
-# 		input_direction = input_dirs[0]
-	
-# 	set_visuals() # CONTINUE HERE, get correct visuals for multiple outputs
 
 
 func set_visuals():
@@ -155,86 +135,172 @@ func update_ports() -> void:
 ###################
 
 func _on_tick():
-	_advance_items()
+	if self.is_preview:
+		return
+
+	advance_items()
+	fetch_inputs()
 
 
-func _advance_items():
-	if items.is_empty():
+func fetch_inputs():
+	if not can_accept_item():
 		return
 	
-	# iterate backwards to handle removal while iterating
-	for i in range(items.size() - 1, -1, -1):
-		var item = items[i]
+	# Try inputs in round-robin fashion
+	var num_inputs = input_ports.size()
+	for i in range(num_inputs):
+		var input_index = (current_input_index + i) % num_inputs
+		var port = input_ports[input_index]
+		
+		var building: Node2D = GridRegistry.get_building(tile_coordinates + port.local_dir)
+		if building is Building and building.has_method("get_output_inventory"):
+			var output_inventory = building.get_output_inventory()
+			if output_inventory.items.size() > 0:
+				# Get first item (FIFO)
+				var item_id = output_inventory.items.keys()[0]
+				
+				# Get ItemData from the building
+				var item_data: ItemData = null
+				if building.has_method("get_item_data"):
+					item_data = building.get_item_data(item_id)
+				
+				if item_data != null:
+					# Create and add item instance to belt
+					var item_instance_scene = preload(Constants.OTHER_SCENE_PATH["item_instance"])
+					var item_instance = item_instance_scene.instantiate() as ItemInstance
+					item_instance.item_data = item_data
+					
+					add_item(item_instance, 0.0)
+					
+					get_tree().current_scene.add_child(item_instance)
+					item_instance.global_position = _point_from_progress(0.0)
+					
+					# Remove from source building's output inventory
+					output_inventory.remove(item_id, 1)
+					
+					# Move to next input for next time
+					current_input_index = (input_index + 1) % num_inputs
+					
+					# Only accept one item per tick
+					return
+				else:
+					print("Could not get ItemData for item_id: ", item_id)
+		elif building is ConveyorBelt:
+			if building.item_inventory.is_empty():
+				continue
+			elif building.item_inventory[0].progress < 1.0:
+				continue
+			else:
+				var item: ItemInstance = building.item_inventory[0]
+
+				# add item to own inventory
+				add_item(item, 0.0) # Initial progress set to 0.1 because 0.0 would be the same as 1.0 at the belt in front
+				item.progress = item.progress + speed / TickManager.tick_rate
+
+				# remove item from inventory of the other belt
+				building.item_inventory.remove_at(0)
+
+
+func advance_items():
+	if item_inventory.size() < 1:
+		return
+	
+	for i in range(item_inventory.size()):
+		var item = item_inventory[i]
 		var max_progress := 1.0
 		
 		# block by item ahead
-		if i < items.size() - 1:
-			var item_ahead = items[i + 1]
+		if i > 0: # don't update oldest items max_progress
+			var item_ahead = item_inventory[i - 1]
 			max_progress = item_ahead.progress - min_spacing
+		
+		# prevent items from getting negative max_progress
+		max_progress = max(max_progress, 0.0)
 		
 		# move toward max progress
 		item.progress = min(item.progress + speed / TickManager.tick_rate, max_progress)
-		
-		# reached end?
-		if item.progress >= 1.0:
-			_push_to_next_belt(item)
-	
+			
 	_update_item_positions()
 
 
-func _get_next_belt() -> ConveyorBelt:
-	var output_dir = output_ports[0].local_dir
-	var target_pos: Vector2i = global_position + output_dir * Constants.TILE_SIZE
+# maybe not needed after item flow refactor
+# func _get_next_belt() -> ConveyorBelt:
+# 	var output_dir = output_ports[0].local_dir
+# 	var target_pos: Vector2i = global_position + output_dir * Constants.TILE_SIZE
 	
-	for belt in get_tree().get_nodes_in_group("belts"):
-		if belt == self:
-			continue
-		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
-			return belt
+# 	for belt in get_tree().get_nodes_in_group("belts"):
+# 		if belt == self:
+# 			continue
+# 		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
+# 			return belt
 	
-	return null
+# 	return null
 
 
-func _push_to_next_belt(item):
-	next_belt = _get_next_belt()
+# maybe not needed after item flow refactor
+# func _push_to_next_belt(item):
+# 	next_belt = _get_next_belt()
 	
-	if next_belt == null:
-		return
+# 	if next_belt == null:
+# 		return
 	
-	if next_belt.can_accept_item():
-		items.erase(item)
-		next_belt.add_item(item, 0.0)
+# 	if next_belt.can_accept_item():
+# 		items.erase(item)
+# 		next_belt.add_item(item, 0.0)
+
+
+# maybe not needed after item flow refactor
+# func can_accept_item() -> bool:
+# 	if items.is_empty():
+# 		return true
+	
+# 	return items[0].progress > min_spacing
 
 
 func can_accept_item() -> bool:
-	if items.is_empty():
+	# Can accept if inventory is empty
+	if item_inventory.is_empty():
 		return true
-	
-	return items[0].progress > min_spacing
+
+	# return true if progress from last item in array (which is the newest one on the belt) is greater than min_spacing
+	return item_inventory[-1].progress > min_spacing
 
 
 func add_item(item, start_progress := 0.0):
 	item.current_belt = self
 	item.progress = start_progress
-	items.append(item)
+	item_inventory.append(item)
 
 
 func _update_item_positions():
-	for item in items:
+	for i in range(item_inventory.size()):
+		var item = item_inventory[i]
 		item.global_position = _point_from_progress(item.progress)
 
 
-func _point_from_progress(progress: float) -> Vector2i:
+func _point_from_progress(progress: float) -> Vector2:
+	var half_tile = Constants.TILE_SIZE / 2.0
+	
 	var input_dir = Vector2i.LEFT
 	if not input_ports.is_empty():
 		input_dir = input_ports[0].local_dir
 	
 	var output_dir = output_ports[0].local_dir
-	var start: Vector2 = global_position + input_dir * Constants.TILE_SIZE
-	var end: Vector2 = Vector2i(global_position) + output_dir
-	return (start.lerp(end, progress) as Vector2i)
+	
+	# Item position: input edge -> center -> output edge
+	# This ensures items always cross the center and handle turns properly
+	var input_edge = Vector2(global_position) + Vector2(input_dir) * half_tile
+	var center = Vector2(global_position)
+	var output_edge = Vector2(global_position) + Vector2(output_dir) * half_tile
+	
+	if progress < 0.5:
+		# First half: input edge to center
+		return input_edge.lerp(center, progress * 2.0)
+	else:
+		# Second half: center to output edge
+		return center.lerp(output_edge, (progress - 0.5) * 2.0)
 
 
 func _on_tree_exiting() -> void:
-	for item in items:
+	for item in item_inventory:
 		item.queue_free()
