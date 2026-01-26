@@ -2,45 +2,87 @@ class_name Trash
 extends Building
 
 
-@export var intake_per_second: int = 1
-
-signal item_taken(item)
-
-var tick_counter: int = 0
-
-#const TILE_SIZE: float = 16.0
-
+var current_input_index: int = 0 # for round-robin input prioritization
+var output_inventory: Inventory = Inventory.new(): get = get_output_inventory
+var max_stacksize: int = 999
 
 func _ready():
 	super._ready()
 	TickManager.tick.connect(_on_tick)
-	#self.add_to_group("buildings")
+
+	output_inventory.max_stacksize = max_stacksize
+	setup_input_ports()
+
+
+func setup_input_ports() -> void:
+	input_ports.clear()
+	
+	# Check all 4 neighbors and create input ports for those pointing at us
+	var neighbor_dirs = [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+	
+	for direction in neighbor_dirs:
+		var neighbor = GridRegistry.get_building(tile_coordinates + direction)
+		if neighbor and neighbor is Building:
+			# Check if neighbor has an output port pointing at us
+			for output_port in neighbor.output_ports:
+				if neighbor.tile_coordinates + output_port.local_dir == tile_coordinates:
+					# Create input port from neighbor output direction
+					var input_port = Port.new()
+					input_port.port_type = Port.PortType.INPUT
+					input_port.local_dir = direction # input_port direction should be == direction we found the neighbor in
+					input_ports.append(input_port)
+					break # because one output port pointing at us is enough. we don't need to know about any other ports from that neighbor
+
+
+func update_ports() -> void:
+	setup_input_ports()
+
 
 func _on_tick():
-	tick_counter += 1
-	
-	if tick_counter >= TickManager.tick_rate / intake_per_second:
-		tick_counter = 0
-		take_in_item()
-
-func take_in_item():
-	var belt: Node2D = get_input_belt()
-	if belt == null or belt.items.size() < 1:
+	if self.is_preview:
 		return
-	
-	var intake_item: Node2D = belt.items[0]
-	emit_signal("item_taken", intake_item)
-	# print("Taken Item in: " + str(intake_item.display_name))
-	belt.items.erase(intake_item) # maybe later on move deletion of the item to belt. but it's fine for now
-	intake_item.queue_free()
-	
-	
-func get_input_belt():
-	var input_dir = input_ports[0].local_dir if input_ports.size() > 0 else Vector2i.LEFT
-	var target_pos = global_position + input_dir * Constants.TILE_SIZE
-	
-	for belt in get_tree().get_nodes_in_group("belts"):
-		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
-			return belt
-	
-	return null
+
+	fetch_inputs()
+	print(output_inventory.items)
+
+
+func fetch_inputs():
+	# Try inputs in round-robin fashion
+	var num_inputs = input_ports.size()
+	for i in range(num_inputs):
+		var input_index = (current_input_index + i) % num_inputs
+		var port = input_ports[input_index]
+		
+		var building: Node2D = GridRegistry.get_building(tile_coordinates + port.local_dir)
+		if building is Building and building.has_method("get_output_inventory"):
+			var output_inv = building.get_output_inventory()
+			if output_inv.items.size() > 0:
+				# Get first item (FIFO)
+				var item = output_inv.items.keys()[0]
+
+				# add item to own inventory
+				output_inventory.add(item, 1)
+				
+				# remove from other building's inventory
+				output_inv.remove(item, 1)
+
+		elif building is ConveyorBelt:
+			if building.item_inventory.is_empty():
+				continue
+			elif building.item_inventory[0].progress < 1.0:
+				continue
+			else:
+				var item: ItemInstance = building.item_inventory[0]
+
+				# add item to own inventory
+				output_inventory.add(item.item_data.id, 1)
+
+				item.queue_free()
+
+				# remove item from inventory of the other belt
+				building.item_inventory.remove_at(0)
+
+
+## For other buildings and conveyor belts to get access to this inventory
+func get_output_inventory():
+	return output_inventory

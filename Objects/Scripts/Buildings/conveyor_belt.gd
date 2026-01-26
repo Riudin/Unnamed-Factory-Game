@@ -154,10 +154,10 @@ func fetch_inputs():
 		
 		var building: Node2D = GridRegistry.get_building(tile_coordinates + port.local_dir)
 		if building is Building and building.has_method("get_output_inventory"):
-			var output_inventory = building.get_output_inventory()
-			if output_inventory.items.size() > 0:
+			var output_inv = building.get_output_inventory()
+			if output_inv.items.size() > 0:
 				# Get first item (FIFO)
-				var item_id = output_inventory.items.keys()[0]
+				var item_id = output_inv.items.keys()[0]
 				
 				# Get ItemData from the building
 				var item_data: ItemData = null
@@ -170,13 +170,13 @@ func fetch_inputs():
 					var item_instance = item_instance_scene.instantiate() as ItemInstance
 					item_instance.item_data = item_data
 					
-					add_item(item_instance, 0.0)
+					add_item(item_instance, 0.0, port.local_dir)
 					
 					get_tree().current_scene.add_child(item_instance)
-					item_instance.global_position = _point_from_progress(0.0)
+					item_instance.global_position = _point_from_progress(0.0, port.local_dir)
 					
 					# Remove from source building's output inventory
-					output_inventory.remove(item_id, 1)
+					output_inv.remove(item_id, 1)
 					
 					# Move to next input for next time
 					current_input_index = (input_index + 1) % num_inputs
@@ -194,7 +194,7 @@ func fetch_inputs():
 				var item: ItemInstance = building.item_inventory[0]
 
 				# add item to own inventory
-				add_item(item, 0.0) # Initial progress set to 0.1 because 0.0 would be the same as 1.0 at the belt in front
+				add_item(item, 0.0, port.local_dir) # Initial progress set to 0.1 because 0.0 would be the same as 1.0 at the belt in front
 				item.progress = item.progress + speed / TickManager.tick_rate
 
 				# remove item from inventory of the other belt
@@ -223,40 +223,6 @@ func advance_items():
 	_update_item_positions()
 
 
-# maybe not needed after item flow refactor
-# func _get_next_belt() -> ConveyorBelt:
-# 	var output_dir = output_ports[0].local_dir
-# 	var target_pos: Vector2i = global_position + output_dir * Constants.TILE_SIZE
-	
-# 	for belt in get_tree().get_nodes_in_group("belts"):
-# 		if belt == self:
-# 			continue
-# 		if belt.global_position.distance_to(target_pos) < Constants.TILE_SIZE / 2:
-# 			return belt
-	
-# 	return null
-
-
-# maybe not needed after item flow refactor
-# func _push_to_next_belt(item):
-# 	next_belt = _get_next_belt()
-	
-# 	if next_belt == null:
-# 		return
-	
-# 	if next_belt.can_accept_item():
-# 		items.erase(item)
-# 		next_belt.add_item(item, 0.0)
-
-
-# maybe not needed after item flow refactor
-# func can_accept_item() -> bool:
-# 	if items.is_empty():
-# 		return true
-	
-# 	return items[0].progress > min_spacing
-
-
 func can_accept_item() -> bool:
 	# Can accept if inventory is empty
 	if item_inventory.is_empty():
@@ -266,24 +232,21 @@ func can_accept_item() -> bool:
 	return item_inventory[-1].progress > min_spacing
 
 
-func add_item(item, start_progress := 0.0):
+func add_item(item, start_progress := 0.0, from_input_dir: Vector2i = Vector2i.LEFT):
 	item.current_belt = self
 	item.progress = start_progress
+	item.input_port_dir = from_input_dir
 	item_inventory.append(item)
 
 
 func _update_item_positions():
 	for i in range(item_inventory.size()):
 		var item = item_inventory[i]
-		item.global_position = _point_from_progress(item.progress)
+		item.global_position = _point_from_progress(item.progress, item.input_port_dir)
 
 
-func _point_from_progress(progress: float) -> Vector2:
+func _point_from_progress(progress: float, input_dir: Vector2i = input_ports[0].local_dir) -> Vector2:
 	var half_tile = Constants.TILE_SIZE / 2.0
-	
-	var input_dir = Vector2i.LEFT
-	if not input_ports.is_empty():
-		input_dir = input_ports[0].local_dir
 	
 	var output_dir = output_ports[0].local_dir
 	

@@ -9,6 +9,7 @@ var item_data: ItemData
 
 var progress: float = 0.0
 var current_belt: ConveyorBelt = null
+var input_port_dir: Vector2i = Vector2i.LEFT # Direction of the input port this item entered from
 
 
 func _ready() -> void:

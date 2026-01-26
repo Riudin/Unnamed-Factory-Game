@@ -2,7 +2,6 @@ Features:
 
 - Belt Animations
 - rotate selected building
-- rotate while dragging belts
 - click builing to display info
 - let there be items
 - select building by clicking toolbar
@@ -19,10 +18,13 @@ Features:
 
 Next Tasks:
 
-- implement items
+- implement splitter
 
 Bugs:
 
-- belt preview sometimes stays red if on existing belt and then rotated. Should turn green as soon as direction is different to buit belt
+- belts are able to get items from adjacent belts that don't have an output in their direction, implement
+if the item is unable to progress in the correct direction
+- belt preview sometimes stays red if on existing belt and then rotated. Should turn green as soon as 
+direction is different to buit belt
 - preview not refreshed often enough. if you move mouse fast, preview gets rendered to seldom
 - rotating while drag placing belts is ... interesting
