@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dngtmrmbihxbj"
-path="res://.godot/imported/selection_highlight_white.png-4c75eb42149545434f6e38ff347425c6.ctex"
+uid="uid://cqgfne5vyws2v"
+path="res://.godot/imported/trash_icon.png-3049e9271b6ab21ee796447fab7f8504.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/selection_highlight_white.png"
-dest_files=["res://.godot/imported/selection_highlight_white.png-4c75eb42149545434f6e38ff347425c6.ctex"]
+source_file="res://Assets/Textures/Buildings/Icons/trash_icon.png"
+dest_files=["res://.godot/imported/trash_icon.png-3049e9271b6ab21ee796447fab7f8504.ctex"]
 
 [params]
 

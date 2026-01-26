@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b0pcek6usjqqx" path="res://Objects/Scripts/Buildings/giver.gd" id="1_e1tjb"]
 [ext_resource type="Resource" uid="uid://31tj0me2pjdk" path="res://Resources/Items/stone.tres" id="2_2q2vu"]
-[ext_resource type="Texture2D" uid="uid://lr20anc2mgh0" path="res://Assets/Textures/giver_icon.png" id="2_j747n"]
+[ext_resource type="Texture2D" uid="uid://lr20anc2mgh0" path="res://Assets/Textures/Buildings/Icons/giver_icon.png" id="2_j747n"]
 [ext_resource type="PackedScene" uid="uid://dpias8oq1vqm7" path="res://Util/Components/selection_highlight.tscn" id="5_2q2vu"]
 [ext_resource type="PackedScene" uid="uid://bpf25gn57jbv7" path="res://Util/Components/output_marker.tscn" id="6_urie8"]
 

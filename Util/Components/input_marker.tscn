@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://k3vviks52nrf"]
+
+[ext_resource type="Texture2D" uid="uid://b22wriwpig3dm" path="res://Assets/Textures/UI/selection_highlight_arrow.png" id="1_lkcfi"]
+
+[node name="InputMarker" type="Marker2D"]
+
+[node name="DirectionArrow" type="Sprite2D" parent="."]
+self_modulate = Color(1, 1, 1, 0.75000006)
+position = Vector2(-8, 0)
+texture = ExtResource("1_lkcfi")

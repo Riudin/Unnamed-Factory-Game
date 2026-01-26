@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ecnbnnlk3g36"]
 
-[ext_resource type="Texture2D" uid="uid://6444wp5nribx" path="res://Assets/Textures/stone.png" id="1_fk0pg"]
+[ext_resource type="Texture2D" uid="uid://6444wp5nribx" path="res://Assets/Textures/Items/stone.png" id="1_fk0pg"]
 
 [node name="Stone" type="Sprite2D"]
 z_index = 1

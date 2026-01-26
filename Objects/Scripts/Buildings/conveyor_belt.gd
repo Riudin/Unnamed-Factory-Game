@@ -158,6 +158,7 @@ func fetch_inputs():
 			if output_inv.items.size() > 0:
 				# Get first item (FIFO)
 				var item_id = output_inv.items.keys()[0]
+				print(item_id)
 				
 				# Get ItemData from the building
 				var item_data: ItemData = null

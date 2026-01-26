@@ -56,7 +56,7 @@ func connect_to_neighbors() -> void:
 			
 		if not neighbor or not neighbor is Building:
 			continue
-        
+		
 		# Try to connect our output ports to neighbor's input ports
 		for our_output in output_ports:
 			if our_output.local_dir == direction: # Our port points at neighbor

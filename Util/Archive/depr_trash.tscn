@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://4irg3opllce6"]
 
 [ext_resource type="Script" uid="uid://bth7wj3lu0k3a" path="res://Util/Archive/depr_trash.gd" id="1_ykujb"]
-[ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/trash_icon.png" id="2_c4671"]
+[ext_resource type="Texture2D" uid="uid://cqgfne5vyws2v" path="res://Assets/Textures/Buildings/Icons/trash_icon.png" id="2_c4671"]
 [ext_resource type="PackedScene" uid="uid://dric6t2pd0p12" path="res://Util/Archive/depr_item_holder.tscn" id="3_gmpa8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tkt07"]

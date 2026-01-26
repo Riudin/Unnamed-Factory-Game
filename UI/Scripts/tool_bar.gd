@@ -13,6 +13,7 @@ func _ready() -> void:
 	slot1.set_building("conveyor_belt")
 	slot2.set_building("giver")
 	slot3.set_building("trash")
+	slot4.set_building("splitter")
 
 
 ''' OLD

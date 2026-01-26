@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btm840gw32y2y"
-path="res://.godot/imported/conveyor_belt_icon.png-18a84c1604e065dc3d8e7321b6e08c62.ctex"
+uid="uid://nblp6wd7kqhd"
+path="res://.godot/imported/selection_highlight_arrow_white.png-152155db660f37628f242af7748838cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/conveyor_belt_icon.png"
-dest_files=["res://.godot/imported/conveyor_belt_icon.png-18a84c1604e065dc3d8e7321b6e08c62.ctex"]
+source_file="res://Assets/Textures/UI/selection_highlight_arrow_white.png"
+dest_files=["res://.godot/imported/selection_highlight_arrow_white.png-152155db660f37628f242af7748838cc.ctex"]
 
 [params]
 

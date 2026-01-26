@@ -21,7 +21,7 @@ func _process(_delta: float) -> void:
 func set_building(building_key: String) -> void:
 	# Set which building this slot stores and update the display
 	if building_key not in Constants.BUILDING_SCENE_PATH and building_key != "":
-		push_error("Building key '%s' not found in BuildingHandler" % building_key)
+		push_error("Building key '%s' not found in global constants" % building_key)
 		return
 	
 	stored_building_key = building_key

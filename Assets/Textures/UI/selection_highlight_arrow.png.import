@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://nblp6wd7kqhd"
-path="res://.godot/imported/selection_highlight_arrow_white.png-5e1752d5f4ccc22b84456198cbd75e64.ctex"
+uid="uid://b22wriwpig3dm"
+path="res://.godot/imported/selection_highlight_arrow.png-fde2b15d7621fb3a7b4cf8e5de8eb47b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/selection_highlight_arrow_white.png"
-dest_files=["res://.godot/imported/selection_highlight_arrow_white.png-5e1752d5f4ccc22b84456198cbd75e64.ctex"]
+source_file="res://Assets/Textures/UI/selection_highlight_arrow.png"
+dest_files=["res://.godot/imported/selection_highlight_arrow.png-fde2b15d7621fb3a7b4cf8e5de8eb47b.ctex"]
 
 [params]
 

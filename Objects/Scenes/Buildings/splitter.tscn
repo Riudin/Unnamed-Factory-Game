@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://bwluh2uwachkx"]
+
+[ext_resource type="Script" uid="uid://d18is72j6f0qg" path="res://Objects/Scripts/Buildings/splitter.gd" id="1_ibx2m"]
+[ext_resource type="Texture2D" uid="uid://8fxx82kb7ygj" path="res://Assets/Textures/Buildings/splitter.png" id="2_vk2ss"]
+[ext_resource type="PackedScene" uid="uid://dpias8oq1vqm7" path="res://Util/Components/selection_highlight.tscn" id="3_akcum"]
+[ext_resource type="PackedScene" uid="uid://bpf25gn57jbv7" path="res://Util/Components/output_marker.tscn" id="4_akcum"]
+[ext_resource type="PackedScene" uid="uid://k3vviks52nrf" path="res://Util/Components/input_marker.tscn" id="5_nojl4"]
+
+[node name="Splitter" type="Node2D" node_paths=PackedStringArray("selection_highlight")]
+script = ExtResource("1_ibx2m")
+selection_highlight = NodePath("SelectionHighlight")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_vk2ss")
+
+[node name="SelectionHighlight" parent="." instance=ExtResource("3_akcum")]
+
+[node name="OutputMarker" parent="SelectionHighlight" instance=ExtResource("4_akcum")]
+
+[node name="OutputMarker2" parent="SelectionHighlight" instance=ExtResource("4_akcum")]
+rotation = -1.5707964
+
+[node name="OutputMarker3" parent="SelectionHighlight" instance=ExtResource("4_akcum")]
+rotation = 1.5707964
+
+[node name="InputMarker" parent="SelectionHighlight" instance=ExtResource("5_nojl4")]

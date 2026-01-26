@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://6444wp5nribx"
-path="res://.godot/imported/stone.png-99a1d84e837affaec2c24c254b7b77e4.ctex"
+uid="uid://btm840gw32y2y"
+path="res://.godot/imported/conveyor_belt_icon.png-e126d55e1811ac1c3b9a7a55af240865.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/stone.png"
-dest_files=["res://.godot/imported/stone.png-99a1d84e837affaec2c24c254b7b77e4.ctex"]
+source_file="res://Assets/Textures/Buildings/Icons/conveyor_belt_icon.png"
+dest_files=["res://.godot/imported/conveyor_belt_icon.png-e126d55e1811ac1c3b9a7a55af240865.ctex"]
 
 [params]
 

@@ -18,7 +18,7 @@ Features:
 
 Next Tasks:
 
-- implement splitter
+- make splitter pass items on. Problem is in getting item data just from a string
 
 Bugs:
 

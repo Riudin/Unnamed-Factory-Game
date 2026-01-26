@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b22wriwpig3dm"
-path="res://.godot/imported/selection_highlight_arrow.png-06f54a6f19452e2c985852cb3826075f.ctex"
+uid="uid://dby7ql6c306fy"
+path="res://.godot/imported/gold_ore.png-36bd2b72b63d3b7326b375b0c56736e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/selection_highlight_arrow.png"
-dest_files=["res://.godot/imported/selection_highlight_arrow.png-06f54a6f19452e2c985852cb3826075f.ctex"]
+source_file="res://Assets/Textures/Items/gold_ore.png"
+dest_files=["res://.godot/imported/gold_ore.png-36bd2b72b63d3b7326b375b0c56736e2.ctex"]
 
 [params]
 

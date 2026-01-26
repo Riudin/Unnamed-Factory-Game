@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://crr7mj0jqutkh"
-path="res://.godot/imported/smithy.png-f6f9563ddb75144d881008f720258c5e.ctex"
+uid="uid://dngtmrmbihxbj"
+path="res://.godot/imported/selection_highlight_white.png-a743dc5dd9f7ff8b0941147f5f015a02.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/smithy.png"
-dest_files=["res://.godot/imported/smithy.png-f6f9563ddb75144d881008f720258c5e.ctex"]
+source_file="res://Assets/Textures/UI/selection_highlight_white.png"
+dest_files=["res://.godot/imported/selection_highlight_white.png-a743dc5dd9f7ff8b0941147f5f015a02.ctex"]
 
 [params]
 

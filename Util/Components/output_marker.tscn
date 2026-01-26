@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bpf25gn57jbv7"]
 
-[ext_resource type="Texture2D" uid="uid://b22wriwpig3dm" path="res://Assets/Textures/selection_highlight_arrow.png" id="1_jj3ep"]
+[ext_resource type="Texture2D" uid="uid://b22wriwpig3dm" path="res://Assets/Textures/UI/selection_highlight_arrow.png" id="1_jj3ep"]
 
 [node name="OutputMarker" type="Marker2D"]
 

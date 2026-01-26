@@ -6,6 +6,7 @@ var current_input_index: int = 0 # for round-robin input prioritization
 var output_inventory: Inventory = Inventory.new(): get = get_output_inventory
 var max_stacksize: int = 999
 
+
 func _ready():
 	super._ready()
 	TickManager.tick.connect(_on_tick)
@@ -43,10 +44,12 @@ func _on_tick():
 		return
 
 	fetch_inputs()
-	print(output_inventory.items)
 
 
 func fetch_inputs():
+	if not can_accept_item():
+		return
+	
 	# Try inputs in round-robin fashion
 	var num_inputs = input_ports.size()
 	for i in range(num_inputs):
@@ -81,6 +84,10 @@ func fetch_inputs():
 
 				# remove item from inventory of the other belt
 				building.item_inventory.remove_at(0)
+
+
+func can_accept_item() -> bool:
+	return true
 
 
 ## For other buildings and conveyor belts to get access to this inventory

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b08qhr368lx3e"
-path="res://.godot/imported/belt_sheet2.png-3bd8a3c9883ba2eed1871e691c1e6aba.ctex"
+uid="uid://lr20anc2mgh0"
+path="res://.godot/imported/giver_icon.png-d1fdcd69a39645d0a423a0c7ac294ce4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/belt_sheet2.png"
-dest_files=["res://.godot/imported/belt_sheet2.png-3bd8a3c9883ba2eed1871e691c1e6aba.ctex"]
+source_file="res://Assets/Textures/Buildings/Icons/giver_icon.png"
+dest_files=["res://.godot/imported/giver_icon.png-d1fdcd69a39645d0a423a0c7ac294ce4.ctex"]
 
 [params]
 

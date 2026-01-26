@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://df8sk510i6tvx"
-path="res://.godot/imported/belt_sheet.png-17000286c8e958e8255bfdadd8cb5833.ctex"
+uid="uid://sv3v7my4i2ph"
+path="res://.godot/imported/splitter_icon.png-3a951f4ffbafe3f56080f49e1fa391f7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Textures/belt_sheet.png"
-dest_files=["res://.godot/imported/belt_sheet.png-17000286c8e958e8255bfdadd8cb5833.ctex"]
+source_file="res://Assets/Textures/Buildings/Icons/splitter_icon.png"
+dest_files=["res://.godot/imported/splitter_icon.png-3a951f4ffbafe3f56080f49e1fa391f7.ctex"]
 
 [params]
 

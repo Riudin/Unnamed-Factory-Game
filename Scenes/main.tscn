@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://8b780ht7r4sa" path="res://Scenes/tile_map.gd" id="2_d1ilt"]
 [ext_resource type="PackedScene" uid="uid://0ju4rdgwo8aw" path="res://Util/Components/camera_controller.tscn" id="5_d1ilt"]
 [ext_resource type="Script" uid="uid://dit3knmrajdww" path="res://UI/Scripts/tool_bar.gd" id="7_d1ilt"]
-[ext_resource type="Texture2D" uid="uid://bsihwq5qh57i8" path="res://Assets/Textures/selection_highlight.png" id="8_hptm8"]
+[ext_resource type="Texture2D" uid="uid://bsihwq5qh57i8" path="res://Assets/Textures/UI/selection_highlight.png" id="8_hptm8"]
 [ext_resource type="Script" uid="uid://ear64kri732a" path="res://UI/Scripts/slot.gd" id="9_d1ilt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jjgbg"]
@@ -25,15 +25,15 @@ sources/0 = SubResource("TileSetAtlasSource_8gbba")
 
 [node name="Main" type="Node2D"]
 
-[node name="GameManager" type="Node" parent="."]
+[node name="GameManager(notUsed)" type="Node" parent="."]
 
-[node name="BuildingMagager" type="Node" parent="GameManager"]
+[node name="BuildingMagager" type="Node" parent="GameManager(notUsed)"]
 
-[node name="InputManager" type="Node" parent="GameManager"]
+[node name="InputManager" type="Node" parent="GameManager(notUsed)"]
 
-[node name="ResourceManager" type="Node" parent="GameManager"]
+[node name="ResourceManager" type="Node" parent="GameManager(notUsed)"]
 
-[node name="UpgradeManager" type="Node" parent="GameManager"]
+[node name="UpgradeManager" type="Node" parent="GameManager(notUsed)"]
 
 [node name="TileMap" type="Node2D" parent="." node_paths=PackedStringArray("tilemap_ground_layer")]
 script = ExtResource("2_d1ilt")

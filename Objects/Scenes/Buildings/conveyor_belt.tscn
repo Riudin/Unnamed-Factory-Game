@@ -1,7 +1,7 @@
 [gd_scene load_steps=35 format=3 uid="uid://dw7e7e6dd5jja"]
 
 [ext_resource type="Script" uid="uid://pmcyggcnlgu6" path="res://Objects/Scripts/Buildings/conveyor_belt.gd" id="1_juhao"]
-[ext_resource type="Texture2D" uid="uid://b08qhr368lx3e" path="res://Assets/Textures/belt_sheet2.png" id="2_vcmkp"]
+[ext_resource type="Texture2D" uid="uid://b08qhr368lx3e" path="res://Assets/Textures/Buildings/belt_sheet2.png" id="2_vcmkp"]
 [ext_resource type="PackedScene" uid="uid://dpias8oq1vqm7" path="res://Util/Components/selection_highlight.tscn" id="3_17qva"]
 
 [sub_resource type="Animation" id="Animation_17qva"]

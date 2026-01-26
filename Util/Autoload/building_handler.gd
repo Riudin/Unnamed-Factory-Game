@@ -46,6 +46,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			rotation_count = 0
 			build_mode = true
 			update_preview()
+	
+	elif event.is_action_pressed("four"):
+		if not build_mode or current_building_path != Constants.BUILDING_SCENE_PATH["splitter"]:
+			current_building_path = Constants.BUILDING_SCENE_PATH["splitter"]
+			rotation_count = 0
+			build_mode = true
+			update_preview()
+
 		else:
 			current_building_path = ""
 			build_mode = false
